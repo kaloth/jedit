@@ -1,0 +1,2 @@
+# jedit
+Various jedit plugins
