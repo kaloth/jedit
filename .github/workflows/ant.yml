@@ -21,6 +21,10 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
+    
+    - name: Install JEdit
+      run: sudo apt-get install -y jedit
+    
     - name: Build Snacky
       working-directory: ./Snacky
       run: ant -noinput -buildfile build.xml
