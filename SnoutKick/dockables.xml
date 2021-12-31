@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<!-- Dockable component definition file for SnoutKick plugin -->
+
+<!DOCTYPE DOCKABLES SYSTEM "dockables.dtd">
+
+<!-- SnoutKick dockable windows -->
+
+<DOCKABLES>
+	<DOCKABLE NAME="SnoutKick">
+		new SnoutKick(view, position);
+	</DOCKABLE>
+</DOCKABLES>

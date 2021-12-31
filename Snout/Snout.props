@@ -1,0 +1,58 @@
+# Properties file for Snout plugin
+
+# jEdit only needs to load the plugin the first time the user accesses it
+# the presence of this property also tells jEdit the plugin is using the new API
+plugin.SnoutPlugin.activate=defer
+
+# These two properties are required for all plugins
+plugin.SnoutPlugin.name=Snout
+plugin.SnoutPlugin.author=Christopher Plant
+
+# version number == jEdit version number
+plugin.SnoutPlugin.version=1.0
+
+# online help
+plugin.SnoutPlugin.docs=index.html
+
+# we only have one dependency, jEdit 4.2, since we use the new plugin API
+plugin.SnoutPlugin.depend.0=jedit 04.02.01.00
+
+# plugin menu
+plugin.SnoutPlugin.menu=Snout \
+	- \
+	Snout.search \
+	Snout.addCurrentDirectoryToIndex \
+	Snout.refreshIndex \
+
+# action labels for actions supplied by dockables.xml
+Snout.label=Snout
+
+# action labels for actions supplied by actions.xml
+Snout.search.label=Search For Definitions
+Snout.addCurrentDirectoryToIndex.label=Add Current Dir to Index
+Snout.refreshIndex.label=Refresh the Index
+
+# plugin option pane
+plugin.SnoutPlugin.option-pane=Snout
+
+# Option pane activation BeanShell snippet
+options.Snout.code=new SnoutOptionPane();
+
+# Option pane labels
+options.Snout.label=Snout
+options.Snout.file=File:
+options.Snout.choose-file=Choose
+options.Snout.choose-file.title=Where is ctags?
+options.Snout.dirlist.title=Where are your source files?
+options.Snout.excludelist.title=What do you want to exclude?
+
+# window title
+Snout.title=Snout
+
+# window toolbar buttons
+Snout.choose-file.icon=Open.png
+Snout.save-file.icon=Save.png
+Snout.copy-to-buffer.icon=CopyToBuffer.png
+
+# Setting not defined but supplied for completeness
+options.Snout.ctagspath=

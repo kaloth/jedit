@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<!-- Dockable component definition file for Snacky plugin -->
+
+<!DOCTYPE DOCKABLES SYSTEM "dockables.dtd">
+
+<!-- Snacky dockable windows -->
+
+<DOCKABLES>
+	<DOCKABLE NAME="Snacky">
+		new Snacky(view, position);
+	</DOCKABLE>
+</DOCKABLES>

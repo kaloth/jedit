@@ -1,0 +1,55 @@
+<!-- Action definition file for SnoutKick plugin -->
+
+<!DOCTYPE ACTIONS SYSTEM "actions.dtd">
+
+<ACTIONS>
+	<ACTION NAME="SnoutKick.refresh">
+		<CODE>
+			obj = view.getDockableWindowManager().getDockable(SnoutKickPlugin.NAME);
+			
+			if(obj == null){
+				split = view.getDockableWindowManager().getDockable("SplitPane");
+				obj = split.getDockable(SnoutKickPlugin.NAME);
+				if(obj == null){
+					view.getDockableWindowManager().showDockableWindow(SnoutKickPlugin.NAME);
+					obj = view.getDockableWindowManager().getDockable(SnoutKickPlugin.NAME);
+				}
+			}
+			
+			obj.refresh(true);
+		</CODE>
+	</ACTION>
+	<ACTION NAME="SnoutKick.next">
+		<CODE>
+			obj = view.getDockableWindowManager().getDockable(SnoutKickPlugin.NAME);
+			
+			if(obj == null){
+				split = view.getDockableWindowManager().getDockable("SplitPane");
+				obj = split.getDockable(SnoutKickPlugin.NAME);
+				if(obj == null){
+					view.getDockableWindowManager().showDockableWindow(SnoutKickPlugin.NAME);
+					obj = view.getDockableWindowManager().getDockable(SnoutKickPlugin.NAME);
+				}
+			}
+			
+			obj.next();
+		</CODE>
+	</ACTION>
+	<ACTION NAME="SnoutKick.prev">
+		<CODE>
+			obj = view.getDockableWindowManager().getDockable(SnoutKickPlugin.NAME);
+			
+			if(obj == null){
+				split = view.getDockableWindowManager().getDockable("SplitPane");
+				obj = split.getDockable(SnoutKickPlugin.NAME);
+				if(obj == null){
+					view.getDockableWindowManager().showDockableWindow(SnoutKickPlugin.NAME);
+					obj = view.getDockableWindowManager().getDockable(SnoutKickPlugin.NAME);
+				}
+			}
+			
+			obj.prev();
+		</CODE>
+	</ACTION>
+</ACTIONS>
+

@@ -1,0 +1,53 @@
+# Properties file for SplitPane plugin
+
+# jEdit only needs to load the plugin the first time the user accesses it
+# the presence of this property also tells jEdit the plugin is using the new API
+plugin.SplitPanePlugin.activate=defer
+
+# These two properties are required for all plugins
+plugin.SplitPanePlugin.name=SplitPane
+plugin.SplitPanePlugin.author=Christopher Plant
+
+# version number == jEdit version number
+plugin.SplitPanePlugin.version=1.0
+
+# online help
+plugin.SplitPanePlugin.docs=index.html
+
+# we only have one dependency, jEdit 4.2, since we use the new plugin API
+plugin.SplitPanePlugin.depend.0=jedit 04.02.01.00
+
+# plugin menu
+plugin.SplitPanePlugin.menu=SplitPane \
+	- \
+	SplitPane.refresh \
+
+# action labels for actions supplied by dockables.xml
+SplitPane.label=SplitPane
+
+# action labels for actions supplied by actions.xml
+SplitPane.refresh.label=Refresh View
+
+# plugin option pane
+plugin.SplitPanePlugin.option-pane=SplitPane
+
+# Option pane activation BeanShell snippet
+options.SplitPane.code=new SplitPaneOptionPane();
+
+# Option pane labels
+options.SplitPane.label=SplitPane
+options.SplitPane.choose-profile.title=Edit Profile:
+options.SplitPane.add.title=Add New Profile
+options.SplitPane.remove.title=Remove Profile
+
+# window title
+SplitPane.title=SplitPane
+
+# window toolbar buttons
+SplitPane.choose-file.icon=Open.png
+SplitPane.save-file.icon=Save.png
+SplitPane.copy-to-buffer.icon=CopyToBuffer.png
+
+# Setting not defined but supplied for completeness
+options.SplitPane.sorttype=0
+options.SplitPane.versions=false

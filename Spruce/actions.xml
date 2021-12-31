@@ -1,0 +1,19 @@
+<!-- Action definition file for Spruce plugin -->
+
+<!DOCTYPE ACTIONS SYSTEM "actions.dtd">
+
+<ACTIONS>
+	<ACTION NAME="Spruce.reload">
+		<CODE>
+			obj = view.getDockableWindowManager().getDockable(SprucePlugin.NAME);
+			
+			if(obj == null){
+				view.getDockableWindowManager().showDockableWindow(SprucePlugin.NAME);
+				obj = view.getDockableWindowManager().getDockable(SprucePlugin.NAME);
+			}
+			
+			obj.reload();
+		</CODE>
+	</ACTION>
+</ACTIONS>
+

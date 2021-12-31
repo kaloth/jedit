@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<!-- Dockable component definition file for SplitPane plugin -->
+
+<!DOCTYPE DOCKABLES SYSTEM "dockables.dtd">
+
+<!-- SplitPane dockable windows -->
+
+<DOCKABLES>
+	<DOCKABLE NAME="SplitPane">
+		new SplitPane(view, position);
+	</DOCKABLE>
+</DOCKABLES>

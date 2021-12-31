@@ -1,0 +1,41 @@
+<?xml version="1.0" standalone="no" ?>
+
+
+<!-- SnoutKick 1.0 help documentation -->
+<!-- Copyright (C) 2007 Christopher James Plant	 -->
+
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+		"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
+<article id="SnoutKick">
+	<articleinfo>
+		<author>
+			<firstname>Christopher</firstname><surname>Plant</surname>
+			<affiliation><address><email>mulletwarriorextreem@hotmail.com</email></address></affiliation>
+		</author>
+		<copyright><year>2007</year><holder>Christopher James Plant</holder></copyright>
+		<legalnotice><title>Legal Notice</title>
+			<para>
+				Permission is granted to copy, distribute and/or modify this document
+				under the terms of the GNU Free Documentation License, Version 1.1 or
+				any later version published by the Free Software Foundation; with no
+				<quote>Invariant Sections</quote>, <quote>Front-Cover Texts</quote> or
+				<quote>Back-Cover Texts</quote>, each as defined in the license. A copy of
+				the license is included in the file <filename>COPYING.DOC.txt</filename>
+				included with the jEdit distribution.
+			</para>
+		</legalnotice>
+		<title>SnoutKick 1.0</title>
+	</articleinfo>
+
+<simplesect><title>Introduction</title>
+<indexterm><primary>SnoutKick</primary></indexterm>
+<para>
+	This plugin is a GUI front end to the ectags program. It looks at the currently open buffer and provides you
+	with a display of indexable elements. In particular SnoutKick can tell you which function your cursor is
+	currently in.
+</para>
+</simplesect>
+
+</article>
+

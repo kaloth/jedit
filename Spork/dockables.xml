@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<!-- Dockable component definition file for Spork plugin -->
+
+<!DOCTYPE DOCKABLES SYSTEM "dockables.dtd">
+
+<!-- Spork dockable windows -->
+
+<DOCKABLES>
+	<DOCKABLE NAME="Spork">
+		new Spork(view, position);
+	</DOCKABLE>
+</DOCKABLES>

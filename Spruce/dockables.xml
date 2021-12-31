@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<!-- Dockable component definition file for Spruce plugin -->
+
+<!DOCTYPE DOCKABLES SYSTEM "dockables.dtd">
+
+<!-- Spruce dockable windows -->
+
+<DOCKABLES>
+	<DOCKABLE NAME="Spruce">
+		new Spruce(view, position);
+	</DOCKABLE>
+</DOCKABLES>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<project name="SnoutKick" default="dist" basedir=".">
+	<property environment="env"/>
+	<property file="build.properties"/>
+
+	<property name="jedit.install.dir"  value="C:/Program Files/JEdit"/>
+	<property name="jar.name"  value="SnoutKick.jar"/>
+	<property name="build" location="classes"/>
+
+	<property name="install.dir"  value="${env.USERPROFILE}/AppData/Roaming/JEdit/jars"/>
+
+
+	<path id="project.class.path">
+		<pathelement location="${jedit.install.dir}/jedit.jar"/>
+		<pathelement location="${build}"/>
+	</path>
+
+
+	<target name="init">
+		<mkdir dir="${build}"/>
+	</target>
+
+
+	<target name="compile" depends="init">
+		<javac
+			srcdir="."
+			destdir="${build}"
+			deprecation="on"
+			includeJavaRuntime="yes"
+			debug="true"
+		>
+			<classpath refid="project.class.path"/>
+		</javac>
+	</target>
+
+
+	<target name="dist" depends="compile">
+		<mkdir dir="${install.dir}"/>
+		<jar jarfile="${install.dir}/${jar.name}">
+			<fileset dir=".">
+				<include name="**/*.props"/>
+				<include name="**/*.html"/>
+				<include name="**/*.gif"/>
+				<include name="actions.xml"/>
+				<include name="dockables.xml"/>
+			</fileset>
+			<fileset dir="classes">
+				<include name="**/*.class"/>
+			</fileset>
+		</jar>
+	</target>
+</project>

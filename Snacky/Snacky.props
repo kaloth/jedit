@@ -1,0 +1,54 @@
+# Properties file for Snacky plugin
+
+# jEdit only needs to load the plugin the first time the user accesses it
+# the presence of this property also tells jEdit the plugin is using the new API
+plugin.SnackyPlugin.activate=defer
+
+# These two properties are required for all plugins
+plugin.SnackyPlugin.name=Snacky
+plugin.SnackyPlugin.author=Christopher Plant
+
+# version number == jEdit version number
+plugin.SnackyPlugin.version=1.0
+
+# online help
+plugin.SnackyPlugin.docs=index.html
+
+# we only have one dependency, jEdit 4.2, since we use the new plugin API
+plugin.SnackyPlugin.depend.0=jedit 04.02.01.00
+
+# plugin menu
+plugin.SnackyPlugin.menu=Snacky \
+	- \
+	Snacky.refresh \
+
+# action labels for actions supplied by dockables.xml
+Snacky.label=Snacky
+
+# action labels for actions supplied by actions.xml
+Snacky.refresh.label=Refresh View
+Snacky.next.label=Goto Next File
+Snacky.prev.label=Goto Prev File
+
+# plugin option pane
+plugin.SnackyPlugin.option-pane=Snacky
+
+# Option pane activation BeanShell snippet
+options.Snacky.code=new SnackyOptionPane();
+
+# Option pane labels
+options.Snacky.label=Snacky
+options.Snacky.choose-sort.title=Sort by...
+options.Snacky.choose-versions.title=Display MKS revision numbers?
+
+# window title
+Snacky.title=Snacky
+
+# window toolbar buttons
+Snacky.choose-file.icon=Open.png
+Snacky.save-file.icon=Save.png
+Snacky.copy-to-buffer.icon=CopyToBuffer.png
+
+# Setting not defined but supplied for completeness
+options.Snacky.sorttype=0
+options.Snacky.versions=false

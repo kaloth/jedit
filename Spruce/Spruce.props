@@ -1,0 +1,52 @@
+# Properties file for Spruce plugin
+
+# jEdit only needs to load the plugin the first time the user accesses it
+# the presence of this property also tells jEdit the plugin is using the new API
+plugin.SprucePlugin.activate=defer
+
+# These two properties are required for all plugins
+plugin.SprucePlugin.name=Spruce
+plugin.SprucePlugin.author=Christopher Plant
+
+# version number == jEdit version number
+plugin.SprucePlugin.version=1.0
+
+# online help
+plugin.SprucePlugin.docs=index.html
+
+# we only have one dependency, jEdit 4.2, since we use the new plugin API
+plugin.SprucePlugin.depend.0=jedit 04.02.01.00
+
+# plugin menu
+plugin.SprucePlugin.menu=Spruce \
+	- \
+	Spruce.reload \
+
+# action labels for actions supplied by dockables.xml
+Spruce.label=Spruce
+
+# action labels for actions supplied by actions.xml
+Spruce.reload.label=Reload
+
+# plugin option pane
+plugin.SprucePlugin.option-pane=Spruce
+
+# Option pane activation BeanShell snippet
+options.Spruce.code=new SpruceOptionPane();
+
+# Option pane labels
+options.Spruce.label=Spruce
+
+# Option pane labels
+options.SnoutKick.docroot.title=Doc Root
+
+# window title
+Spruce.title=Spruce
+
+# window toolbar buttons
+Spruce.choose-file.icon=Open.png
+Spruce.save-file.icon=Save.png
+Spruce.copy-to-buffer.icon=CopyToBuffer.png
+
+# Setting not defined but supplied for completeness
+

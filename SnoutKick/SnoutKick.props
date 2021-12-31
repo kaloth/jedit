@@ -1,0 +1,56 @@
+# Properties file for SnoutKick plugin
+
+# jEdit only needs to load the plugin the first time the user accesses it
+# the presence of this property also tells jEdit the plugin is using the new API
+plugin.SnoutKickPlugin.activate=defer
+
+# These two properties are required for all plugins
+plugin.SnoutKickPlugin.name=SnoutKick
+plugin.SnoutKickPlugin.author=Christopher Plant
+
+# version number == jEdit version number
+plugin.SnoutKickPlugin.version=1.0
+
+# online help
+plugin.SnoutKickPlugin.docs=index.html
+
+# we only have one dependency, jEdit 4.2, since we use the new plugin API
+plugin.SnoutKickPlugin.depend.0=jedit 04.02.01.00
+
+# plugin menu
+plugin.SnoutKickPlugin.menu=SnoutKick \
+	- \
+	SnoutKick.refresh \
+
+# action labels for actions supplied by dockables.xml
+SnoutKick.label=SnoutKick
+
+# action labels for actions supplied by actions.xml
+SnoutKick.refresh.label=Refresh View
+SnoutKick.next.label=Goto Next Tag
+SnoutKick.prev.label=Goto Prev Tag
+
+# plugin option pane
+plugin.SnoutKickPlugin.option-pane=SnoutKick
+
+# Option pane activation BeanShell snippet
+options.SnoutKick.code=new SnoutKickOptionPane();
+
+# Option pane labels
+options.SnoutKick.label=SnoutKick
+options.SnoutKick.file=File:
+options.SnoutKick.choose-file=Choose
+options.SnoutKick.choose-file.title=Where is ctags?
+options.SnoutKick.choose-sort.title=Sort by...
+
+# window title
+SnoutKick.title=SnoutKick
+
+# window toolbar buttons
+SnoutKick.choose-file.icon=Open.png
+SnoutKick.save-file.icon=Save.png
+SnoutKick.copy-to-buffer.icon=CopyToBuffer.png
+
+# Setting not defined but supplied for completeness
+options.SnoutKick.ctagspath=
+options.SnoutKick.sorttype=0

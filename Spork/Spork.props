@@ -1,0 +1,51 @@
+# Properties file for Spork plugin
+
+# jEdit only needs to load the plugin the first time the user accesses it
+# the presence of this property also tells jEdit the plugin is using the new API
+plugin.SporkPlugin.activate=startup
+
+# These two properties are required for all plugins
+plugin.SporkPlugin.name=Spork
+plugin.SporkPlugin.author=Christopher Plant
+
+# version number == jEdit version number
+plugin.SporkPlugin.version=1.0
+
+# online help
+plugin.SporkPlugin.docs=index.html
+
+# we only have one dependency, jEdit 4.2, since we use the new plugin API
+plugin.SporkPlugin.depend.0=jedit 04.02.01.00
+
+# plugin menu
+plugin.SporkPlugin.menu=Spork \
+	- \
+	Spork.forward \
+	Spork.backward \
+
+# action labels for actions supplied by dockables.xml
+Spork.label=Spork
+
+# action labels for actions supplied by actions.xml
+Spork.forward.label=Forward
+Spork.backward.label=Backward
+
+# plugin option pane
+plugin.SporkPlugin.option-pane=Spork
+
+# Option pane activation BeanShell snippet
+options.Spork.code=new SporkOptionPane();
+
+# Option pane labels
+options.Spork.label=Spork
+
+# window title
+Spork.title=Spork
+
+# window toolbar buttons
+Spork.choose-file.icon=Open.png
+Spork.save-file.icon=Save.png
+Spork.copy-to-buffer.icon=CopyToBuffer.png
+
+# Setting not defined but supplied for completeness
+

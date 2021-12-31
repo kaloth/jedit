@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<!-- Dockable component definition file for Snout plugin -->
+
+<!DOCTYPE DOCKABLES SYSTEM "dockables.dtd">
+
+<!-- Snout dockable windows -->
+
+<DOCKABLES>
+	<DOCKABLE NAME="Snout">
+		new Snout(view, position);
+	</DOCKABLE>
+</DOCKABLES>
