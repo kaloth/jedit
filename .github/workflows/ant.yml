@@ -40,3 +40,9 @@ jobs:
     - name: Build Spork
       working-directory: ./Spork
       run: ant -noinput -buildfile build.xml
+      
+    name: Archive binaries
+      uses: actions/upload-artifact@v2
+      with:
+        name: binaries
+        path: /home/runner/jedit/jars/*.jar
