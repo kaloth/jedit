@@ -4,23 +4,48 @@
 	<property environment="env"/>
 	<property file="build.properties"/>
 
-	<property name="jedit.install.dir"  value="C:/Program Files/JEdit"/>
 	<property name="jar.name"  value="SnoutKick.jar"/>
 	<property name="build" location="classes"/>
-
-	<property name="install.dir"  value="${env.USERPROFILE}/AppData/Roaming/JEdit/jars"/>
-
-
-	<path id="project.class.path">
-		<pathelement location="${jedit.install.dir}/jedit.jar"/>
-		<pathelement location="${build}"/>
-	</path>
-
-
-	<target name="init">
-		<mkdir dir="${build}"/>
+	
+	<target name="checkos">
+		<condition property="isWindows" value="true">
+				<os family="windows" />
+		</condition>
+	
+		<condition property="isLinux" value="true">
+				<os family="unix" />
+		</condition>
+	</target>
+	
+	<target name="init_windows" depends="checkos" if="isWindows">
+		<property name="jedit.install.dir"  value="C:/Program Files/JEdit"/>
+		<property name="install.dir"  value="${env.USERPROFILE}/AppData/Roaming/JEdit/jars"/>
+	</target>
+	
+	<target name="init_unix" depends="checkos" if="isLinux">
+		<property name="jedit.install.dir"  value="/usr/share/jedit"/>
+		<property name="install.dir"  value="/home/${user.name}/jedit/jars"/>
 	</target>
 
+	<target name="init" depends="init_unix,init_windows">
+		<mkdir dir="${build}"/>
+		<delete file="docbook-wrapper.xsl" />
+		<echo file="docbook-wrapper.xsl"
+			message="&lt;xsl:stylesheet"/>
+		<echo file="docbook-wrapper.xsl" append="true"
+			message=" xmlns:xsl='http://www.w3.org/1999/XSL/Transform'"/>
+		<echo file="docbook-wrapper.xsl" append="true"
+			message=" xsl:version='1.0'&gt;"/>
+		<echo file="docbook-wrapper.xsl" append="true"
+			message="&lt;xsl:import href='${docbook.xsl}/html/chunk.xsl'/&gt;"/>
+		<echo file="docbook-wrapper.xsl" append="true"
+			message="&lt;/xsl:stylesheet&gt;"/>
+		
+		<path id="project.class.path">
+			<pathelement location="${jedit.install.dir}/jedit.jar"/>
+			<pathelement location="${build}"/>
+		</path>
+	</target>
 
 	<target name="compile" depends="init">
 		<javac
@@ -28,12 +53,10 @@
 			destdir="${build}"
 			deprecation="on"
 			includeJavaRuntime="yes"
-			debug="true"
 		>
 			<classpath refid="project.class.path"/>
 		</javac>
 	</target>
-
 
 	<target name="dist" depends="compile">
 		<mkdir dir="${install.dir}"/>
@@ -49,5 +72,14 @@
 				<include name="**/*.class"/>
 			</fileset>
 		</jar>
+	</target>
+
+	<!-- Generate docs with xsltproc tool from www.xmlsoft.org -->
+	<target name="docs-xsltproc" depends="init">
+		<exec executable="xsltproc">
+			<arg value="--catalogs"/>
+			<arg value="users-guide.xsl"/>
+			<arg value="users-guide.xml"/>
+		</exec>
 	</target>
 </project>
