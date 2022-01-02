@@ -107,7 +107,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 	private JTextField filtbox = new JTextField();
 	
 	private String ctagsdir = "C:\\ctags";
-	private String oldpath = "#~£$% NOT A FILENAME %$£~#";
+	private String oldpath = "#~ NOT A FILENAME ~#";
 	private int oldline = -1;
 	
 	private ResultSet currentResults = null;
