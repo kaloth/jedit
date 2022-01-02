@@ -31,3 +31,12 @@ jobs:
     - name: Build Snout
       working-directory: ./Snout
       run: ant -noinput -buildfile build.xml
+    - name: Build SnoutKick
+      working-directory: ./SnoutKick
+      run: ant -noinput -buildfile build.xml
+    - name: Build SplitPane
+      working-directory: ./SplitPane
+      run: ant -noinput -buildfile build.xml
+    - name: Build Spork
+      working-directory: ./Spork
+      run: ant -noinput -buildfile build.xml
