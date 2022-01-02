@@ -298,7 +298,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 					highlightCurrentTag();
 				}
 				else if (bu.getWhat() == BufferUpdate.SAVED) {
-					oldpath = "#~£$% NOT A FILENAME %$£~#";
+					oldpath = "#~ NOT A FILENAME ~#";
 					highlightCurrentTag();
 					resultCache.remove(bu.getBuffer().getPath());
 				}
