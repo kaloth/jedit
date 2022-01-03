@@ -241,6 +241,12 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 			profile.select(profilename);
 			loadProfile(profilename);
 		}
+		else if(profile.getItemCount() > 0)
+		{
+			// first time? Just load the first profile available.
+			profilename = profile.getItem(0);
+			loadProfile(profilename);
+		}
 	}
 }
 
