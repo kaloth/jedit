@@ -26,6 +26,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
+import java.awt.datatransfer.*;
 
 // from Swing:
 import javax.swing.*;
@@ -85,6 +86,9 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 	private static Color highlight_colour = new Color(180,180,180);
 	private static Color highlight2_colour = new Color(100,100,180);
 	
+	private String workdir = jEdit.getSettingsDirectory() + "/snacky";
+	private File marker_file = new File(workdir + "/markers.txt");
+	
 	private View view;
 	private boolean floating;
 	
@@ -102,7 +106,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 	private Component viewportView = null;
 	
 	private Stack update_queue = new Stack();
-	private Hashtable marker_cache = new Hashtable();
+	private Hashtable<String, ImageIcon> marker_cache = new Hashtable();
 	
 	private ImageIcon status_none;
 	private ImageIcon status_open;
@@ -128,11 +132,9 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 	private String logindir = null;
 	private JDialog loginDiag = new JDialog((Frame)null, "Perforce Password Required", false);
 
-	//
-	// Constructor
-	//
-
-	private ImageIcon createMarkerIcon(Color colour)
+	private Hashtable<String, ImageIcon> marker_map = new Hashtable();
+	
+	private ImageIcon createMarkerIcon(Color colour, String name)
 	{
 		BufferedImage img;
 		Graphics g;
@@ -144,10 +146,13 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		g.setColor(colour);
 		g.drawRoundRect(2,2,8,8,2,2);
 		
-		return new ImageIcon(img);
+		ImageIcon icon =  new ImageIcon(img, name);
+		marker_map.put(name, icon);
+		
+		return icon;
 	}
 	
-	private ImageIcon createStatusIcon(Color colour)
+	private ImageIcon createStatusIcon(Color colour, String name)
 	{
 		BufferedImage img;
 		Graphics g;
@@ -159,12 +164,22 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		g.setColor(colour);
 		g.drawOval(4,4,4,4);
 		
-		return new ImageIcon(img);
+		return new ImageIcon(img, name);
 	}
 	
 	public Snacky(View view, String position)
 	{
 		super(new BorderLayout());
+		
+		if(!marker_file.exists()){
+			try{
+				// This is the first time we have been run...
+				// Create the working folder and initial file contents...
+				marker_file.getParentFile().mkdirs();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
 		
 		BufferedImage img;
 		Graphics g;
@@ -176,18 +191,18 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		status_none = new ImageIcon(img);
 		marker_none = status_none;
 		
-		status_open = createStatusIcon(Color.WHITE);
-		status_add = createStatusIcon(Color.YELLOW);
-		status_lockconflict = createStatusIcon(Color.RED.darker());
-		status_locked = createStatusIcon(Color.GREEN.darker());
-		status_openconflict = createStatusIcon(Color.CYAN.brighter());
+		status_open = createStatusIcon(Color.WHITE, "open");
+		status_add = createStatusIcon(Color.YELLOW, "add");
+		status_lockconflict = createStatusIcon(Color.RED.darker(), "lockconflict");
+		status_locked = createStatusIcon(Color.GREEN.darker(), "locked");
+		status_openconflict = createStatusIcon(Color.CYAN.brighter(), "openconflict");
 		
-		marker_red = createMarkerIcon(Color.RED);
-		marker_green = createMarkerIcon(Color.GREEN);
-		marker_blue = createMarkerIcon(Color.BLUE.brighter());
-		marker_cyan = createMarkerIcon(Color.CYAN);
-		marker_purple = createMarkerIcon(new Color(180, 0, 240));
-		marker_yellow = createMarkerIcon(Color.YELLOW);
+		marker_red = createMarkerIcon(Color.RED, "red");
+		marker_green = createMarkerIcon(Color.GREEN, "green");
+		marker_blue = createMarkerIcon(Color.BLUE.brighter(), "blue");
+		marker_cyan = createMarkerIcon(Color.CYAN, "cyan");
+		marker_purple = createMarkerIcon(new Color(180, 0, 240), "purple");
+		marker_yellow = createMarkerIcon(Color.YELLOW, "yellow");
 		
 		filtbox_marker = new JComboBox(new ImageIcon[]{
 			marker_none, marker_red, marker_green, marker_blue,
@@ -195,6 +210,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		});
 		
 		buildBufferMenu();
+		loadMarkers();
 		
 		flist.getVerticalScrollBar().setUnitIncrement(15);
 		
@@ -346,6 +362,42 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 				}
 			}
 		}).start();
+	}
+	
+	private void saveMarkers()
+	{
+		try {
+			FileWriter fw = new FileWriter(marker_file);
+			
+			for (Map.Entry<String, ImageIcon> marker : marker_cache.entrySet())
+			{
+				fw.write(marker.getKey() + " " + marker.getValue().getDescription() + "\n");
+			}
+			
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadMarkers()
+	{
+		marker_cache.clear();
+		try
+		{
+			BufferedReader buffy = new BufferedReader(new InputStreamReader(new FileInputStream(marker_file)));
+			String line;
+			while((line = buffy.readLine()) != null)
+			{
+				line = line.strip();
+				int i = line.lastIndexOf(' ');
+				String path = line.substring(0, i);
+				String marker = line.substring(i+1);
+				marker_cache.put(path, marker_map.get(marker));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	private void LogMsg(int urgency, java.lang.Object source, java.lang.Object message)
@@ -798,6 +850,17 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 			}
 		});
 		menu.add(diff);
+		
+		JMenuItem cp_path = new JMenuItem("Copy Path");
+		cp_path.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				// copy the buffer path to the clipboard
+				copyBufferPathToClipboard();
+			}
+		});
+		menu.add(cp_path);
 		
 		menu.add(new JPopupMenu.Separator());
 		
@@ -1266,6 +1329,32 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		{
 			Buffer buf = (Buffer)stack.pop();
 			jEdit.closeBuffer(jEdit.getActiveView(), buf);
+		}
+	}
+	
+	private void copyBufferPathToClipboard(){
+		JPanel panel = (JPanel)flist.getViewport().getView();
+		
+		Component[] rlabels = panel.getComponents();
+		
+		for(int n = 0; n < rlabels.length; n++)
+		{
+			if(rlabels[n] instanceof ResultPanel)
+			{
+				if(rlabels[n].getBackground().equals(highlight2_colour))
+				{
+					Buffer buf = ((ResultPanel)rlabels[n]).buf;
+					
+					String path = buf.getPath();
+					
+					StringSelection stringSelection = new StringSelection(path);
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clipboard.setContents(stringSelection, null);
+					
+					// stop at the first one.
+					return;
+				}
+			}
 		}
 	}
 	
@@ -1974,6 +2063,8 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 			
 			marker_cache.put(buf.getPath(), marker);
 			icon.setImage(marker.getImage());
+			
+			saveMarkers();
 			
 			status.setIcon(marker_none);
 			status.setIcon(icon);
