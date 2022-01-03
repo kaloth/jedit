@@ -54,7 +54,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 	public static final String p4_lock = new String("_P4LOCK_");
 	
 	public static String getSortTypeName(String type){
-		return getSortTypeName((new Integer(type)).intValue());
+		return getSortTypeName(Integer.parseInt(type));
 	}
 	
 	public static String getSortTypeName(int type){
@@ -509,7 +509,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 	}
 	
 	public Buffer[] getSortedBufs(){
-		Buffer bufs_unsorted[] = jEdit.getBuffers();
+		Buffer bufs_unsorted[] = jEdit.getActiveView().getBuffers();
 		Buffer bufs[] = new Buffer[bufs_unsorted.length];
 		
 		// Todo: Sort the bufs...
@@ -1192,10 +1192,10 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 
 	private void propertiesChanged()
 	{
-		SortType = (new Integer(jEdit.getProperty(
-			SnackyPlugin.OPTION_PREFIX + "sorttype"))).intValue();
-		DisplayVersionNumbers = (new Boolean(jEdit.getProperty(
-			SnackyPlugin.OPTION_PREFIX + "versions"))).booleanValue();
+		SortType = Integer.parseInt(jEdit.getProperty(
+			SnackyPlugin.OPTION_PREFIX + "sorttype"));
+		DisplayVersionNumbers = Boolean.parseBoolean(jEdit.getProperty(
+			SnackyPlugin.OPTION_PREFIX + "versions"));
 		
 		applyEditorScheme();
 		highlightCurrentBuffer(true, false);
@@ -1572,7 +1572,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		
 		try
 		{
-			BufferedReader buffy = new BufferedReader(new InputStreamReader(new StringBufferInputStream(buf.toString())));
+			BufferedReader buffy = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(String.valueOf(buf).getBytes())));
 			
 			String line;
 			while((line = buffy.readLine()) != null)
@@ -1748,7 +1748,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 					if(bPrev)
 					{
 						Hashtable p4 = getP4FStat(buf);
-						rev = "#" + ((new Integer((String)p4.get("haveRev"))).intValue()-1);
+						rev = "#" + ((Integer.parseInt((String)p4.get("haveRev")))-1);
 					}
 					
 					runCommand("p4 diff -f \"" + buf.getName() + "\"" + rev, buf.getDirectory(), null, false);
