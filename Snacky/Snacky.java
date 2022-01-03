@@ -2061,7 +2061,12 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		{
 			this.marker = marker;
 			
-			marker_cache.put(buf.getPath(), marker);
+			if (marker != marker_none)
+			{
+				marker_cache.put(buf.getPath(), marker);
+			} else {
+				marker_cache.remove(buf.getPath());
+			}
 			icon.setImage(marker.getImage());
 			
 			saveMarkers();
