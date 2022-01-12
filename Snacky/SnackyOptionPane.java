@@ -38,6 +38,7 @@ import org.gjt.sp.jedit.Macros.*;
 public class SnackyOptionPane extends AbstractOptionPane
 {
 	private Choice sortType, displayVersions;
+	private JTextField diffCommand;
 
 	public SnackyOptionPane()
 	{
@@ -65,6 +66,12 @@ public class SnackyOptionPane extends AbstractOptionPane
 		addComponent(jEdit.getProperty(
 			SnackyPlugin.OPTION_PREFIX + "choose-versions.title"),
 			displayVersions);
+		
+		diffCommand = new JTextField(jEdit.getProperty(
+			SnackyPlugin.OPTION_PREFIX + "diffcmd"));
+		addComponent(jEdit.getProperty(
+			SnackyPlugin.OPTION_PREFIX + "diff-command.title"),
+			diffCommand);
 	}
 
 	public void _save()
@@ -74,6 +81,9 @@ public class SnackyOptionPane extends AbstractOptionPane
 		
 		jEdit.setProperty(SnackyPlugin.OPTION_PREFIX + "versions",
 			"" + displayVersions.getSelectedItem().equals("Yes"));
+		
+		jEdit.setProperty(SnackyPlugin.OPTION_PREFIX + "diffcmd",
+			diffCommand.getText());
 	}
 }
 

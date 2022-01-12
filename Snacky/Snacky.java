@@ -94,6 +94,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 	
 	private int SortType = SORT_BY_DIR;
 	private boolean DisplayVersionNumbers = false;
+	private String DiffCommand = "bcomp %1 %2";
 	
 	private JScrollPane flist = new JScrollPane();
 	private JPanel filtbox = new JPanel(new BorderLayout());
@@ -862,6 +863,16 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		});
 		menu.add(cp_path);
 		
+		JMenuItem expl = new JMenuItem("Explore");
+		expl.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				showBufferInExplorer();
+			}
+		});
+		menu.add(expl);
+		
 		menu.add(new JPopupMenu.Separator());
 		
 		/**
@@ -1196,6 +1207,8 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 			SnackyPlugin.OPTION_PREFIX + "sorttype"));
 		DisplayVersionNumbers = Boolean.parseBoolean(jEdit.getProperty(
 			SnackyPlugin.OPTION_PREFIX + "versions"));
+		DiffCommand = jEdit.getProperty(
+			SnackyPlugin.OPTION_PREFIX + "diffcmd");
 		
 		applyEditorScheme();
 		highlightCurrentBuffer(true, false);
@@ -1266,7 +1279,8 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 					 */
 					File prev = new File(first.getPath() + "~");
 					if (prev.exists()) {
-						String fcom[] = new String[]{"bcomp", first.getPath(), prev.getPath()};
+						String fcom = DiffCommand.replace("%1", "\""+first.getPath()+"\"").replace("%2", "\""+prev.getPath()+"\"");
+						//LogMsg(Log.ERROR, Snacky.class, "Diff: " + fcom);
 						Process p = Runtime.getRuntime().exec(fcom);
 						//p.waitFor();
 					} else {
@@ -1274,7 +1288,8 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 					}
 				} else {
 					/* two buffers selected, diff them */
-					String fcom[] = new String[]{"bcomp", first.getPath(), second.getPath()};
+					String fcom = DiffCommand.replace("%1", "\""+first.getPath()+"\"").replace("%2", "\""+second.getPath()+"\"");
+					//LogMsg(Log.ERROR, Snacky.class, "Diff: " + fcom);
 					Process p = Runtime.getRuntime().exec(fcom);
 					//p.waitFor();
 				}
@@ -1356,6 +1371,37 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 				}
 			}
 		}
+	}
+	
+	private void showBufferInExplorer(){
+		JPanel panel = (JPanel)flist.getViewport().getView();
+		
+		Component[] rlabels = panel.getComponents();
+		
+		for(int n = 0; n < rlabels.length; n++)
+		{
+			if(rlabels[n] instanceof ResultPanel)
+			{
+				if(rlabels[n].getBackground().equals(highlight2_colour))
+				{
+					Buffer buf = ((ResultPanel)rlabels[n]).buf;
+					
+					try
+					{
+						Runtime.getRuntime().exec("explorer /select,\"" + buf.getPath() + "\"");
+					}
+					catch(Exception e)
+					{
+						LogMsg(Log.ERROR, Snacky.class,
+							"Exception while launching explorer: " + buf.getPath(), e);
+					}
+					
+					// stop at the first one.
+					return;
+				}
+			}
+		}
+		
 	}
 	
 	private void markHighlightedBuffers(ImageIcon icon){

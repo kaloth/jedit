@@ -39,7 +39,8 @@ options.Snacky.code=new SnackyOptionPane();
 # Option pane labels
 options.Snacky.label=Snacky
 options.Snacky.choose-sort.title=Sort by...
-options.Snacky.choose-versions.title=Display MKS revision numbers?
+options.Snacky.choose-versions.title=Display P4 revision numbers?
+options.Snacky.diff-command.title=Custom diff command
 
 # window title
 Snacky.title=Snacky
@@ -52,3 +53,4 @@ Snacky.copy-to-buffer.icon=CopyToBuffer.png
 # Setting not defined but supplied for completeness
 options.Snacky.sorttype=0
 options.Snacky.versions=false
+options.Snacky.diffcmd=bcomp %1 %2
