@@ -53,6 +53,7 @@
 			destdir="${build}"
 			deprecation="on"
 			includeJavaRuntime="yes"
+			includeAntRuntime="yes"
 		>
 			<classpath refid="project.class.path"/>
 		</javac>
