@@ -54,7 +54,7 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	private PluginLoader pluginLoader = new PluginLoader();
 	private JSplitPane jsp = new JSplitPane();
 	
-	private Choice profile = new Choice();
+	private JComboBox<String> profile = new JComboBox();
 	
 	private Object[] plugins;
 	private String[] names;
@@ -126,7 +126,7 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	
 	private void updateProfileList()
 	{
-		profile.removeAll();
+		profile.removeAllItems();
 		
 		String profiles = jEdit.getProperty(
 			SplitPanePlugin.OPTION_PREFIX + "profiles");
@@ -139,7 +139,7 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 			{
 				if(!profile_list[n].equals(""))
 				{
-					profile.add(profile_list[n]);
+					profile.addItem(profile_list[n]);
 				}
 			}
 		}
@@ -148,7 +148,7 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		
 		if(profilename != null)
 		{
-			profile.select(profilename);
+			profile.setSelectedItem(profilename);
 		}
 	}
 
@@ -229,7 +229,7 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 			{
 				if(e.getStateChange() == e.SELECTED)
 				{
-					loadProfile(profile.getSelectedItem());
+					loadProfile((String)profile.getSelectedItem());
 				}
 			}
 		});
@@ -238,13 +238,13 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		
 		if(profilename != null)
 		{
-			profile.select(profilename);
+			profile.setSelectedItem(profilename);
 			loadProfile(profilename);
 		}
 		else if(profile.getItemCount() > 0)
 		{
 			// first time? Just load the first profile available.
-			profilename = profile.getItem(0);
+			profilename = profile.getItemAt(0);
 			loadProfile(profilename);
 		}
 	}
