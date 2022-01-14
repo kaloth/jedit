@@ -32,17 +32,9 @@ import javax.swing.event.*;
 // from jEdit:
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.gui.*;
-import org.gjt.sp.jedit.io.*;
-import org.gjt.sp.jedit.msg.PropertiesChanged;
-import org.gjt.sp.jedit.msg.ViewUpdate;
-import org.gjt.sp.jedit.msg.BufferUpdate;
-import org.gjt.sp.jedit.msg.EditPaneUpdate;
+import org.gjt.sp.jedit.msg.*;
+
 import org.gjt.sp.util.Log;
-
-import org.gjt.sp.jedit.search.*;
-import org.gjt.sp.jedit.textarea.*;
-
-import org.gjt.sp.jedit.Macros.*;
 
 
 public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
@@ -59,9 +51,6 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	private Object[] plugins;
 	private String[] names;
 	
-	//
-	// Constructor
-	//
 	public SplitPane(View view, String position)
 	{
 		super(new BorderLayout());
@@ -74,11 +63,13 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		propertiesChanged();
 	}
 	
-	public void start(){
+	public void start()
+	{
 		
 	}
 	
-	public void stop(){
+	public void stop()
+	{
 		
 	}
 	
@@ -98,31 +89,17 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		}
 	}
 
-	// These JComponent methods provide the appropriate points
-	// to subscribe and unsubscribe this object to the EditBus
-
 	public void addNotify()
 	{
 		super.addNotify();
 		EditBus.addToBus(this);
 	}
 
-
 	public void removeNotify()
 	{
 		super.removeNotify();
 		EditBus.removeFromBus(this);
 	}
-
-	//
-	// SplitPaneActions implementation
-	//
-	
-	
-	
-	//
-	// Private Functions...
-	//
 	
 	private void updateProfileList()
 	{
