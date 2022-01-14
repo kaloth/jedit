@@ -37,7 +37,7 @@ import org.gjt.sp.jedit.Macros.*;
 
 public class SnackyOptionPane extends AbstractOptionPane
 {
-	private Choice sortType, displayVersions;
+	private JComboBox<String> sortType, displayVersions;
 	private JTextField diffCommand;
 
 	public SnackyOptionPane()
@@ -47,20 +47,20 @@ public class SnackyOptionPane extends AbstractOptionPane
 
 	public void _init()
 	{
-		sortType = new Choice();
-		sortType.add("Directory");
-		sortType.add("File");
-		sortType.select(Snacky.getSortTypeName(jEdit.getProperty(
+		sortType = new JComboBox<String>();
+		sortType.addItem("Directory");
+		sortType.addItem("File");
+		sortType.setSelectedItem(Snacky.getSortTypeName(jEdit.getProperty(
 			SnackyPlugin.OPTION_PREFIX + "sorttype")));
 			
 		addComponent(jEdit.getProperty(
 			SnackyPlugin.OPTION_PREFIX + "choose-sort.title"),
 			sortType);
 		
-		displayVersions = new Choice();
-		displayVersions.add("Yes");
-		displayVersions.add("No");
-		displayVersions.select((jEdit.getBooleanProperty(
+		displayVersions = new JComboBox<String>();
+		displayVersions.addItem("Yes");
+		displayVersions.addItem("No");
+		displayVersions.setSelectedItem((jEdit.getBooleanProperty(
 			SnackyPlugin.OPTION_PREFIX + "versions")?"Yes":"No"));
 		
 		addComponent(jEdit.getProperty(
@@ -77,7 +77,7 @@ public class SnackyOptionPane extends AbstractOptionPane
 	public void _save()
 	{
 		jEdit.setProperty(SnackyPlugin.OPTION_PREFIX + "sorttype",
-			"" + Snacky.getSortType(sortType.getSelectedItem()));
+			"" + Snacky.getSortType((String)sortType.getSelectedItem()));
 		
 		jEdit.setProperty(SnackyPlugin.OPTION_PREFIX + "versions",
 			"" + displayVersions.getSelectedItem().equals("Yes"));

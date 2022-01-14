@@ -43,7 +43,7 @@ public class SnoutKickOptionPane extends AbstractOptionPane
 {
 	private JCheckBox showPath;
 	private JTextField pathName;
-	private Choice sortType;
+	private JComboBox<String> sortType;
 
 	public SnoutKickOptionPane()
 	{
@@ -58,12 +58,12 @@ public class SnoutKickOptionPane extends AbstractOptionPane
 		JButton pickPath = new JButton(jEdit.getProperty(
 			SnoutKickPlugin.OPTION_PREFIX + "choose-file"));
 		pickPath.addActionListener(this);
-		sortType = new Choice();
-		sortType.add("Line");
-		sortType.add("Name");
-		sortType.add("Type");
-		sortType.add("Structure");
-		sortType.select(SnoutKick.getSortTypeName(jEdit.getProperty(
+		sortType = new JComboBox<String>();
+		sortType.addItem("Line");
+		sortType.addItem("Name");
+		sortType.addItem("Type");
+		sortType.addItem("Structure");
+		sortType.setSelectedItem(SnoutKick.getSortTypeName(jEdit.getProperty(
 			SnoutKickPlugin.OPTION_PREFIX + "sorttype")));
 
 		JPanel pathPanel = new JPanel(new BorderLayout(0, 0));
@@ -85,7 +85,7 @@ public class SnoutKickOptionPane extends AbstractOptionPane
 			pathName.getText());
 			
 		jEdit.setProperty(SnoutKickPlugin.OPTION_PREFIX + "sorttype",
-			"" + SnoutKick.getSortType(sortType.getSelectedItem()));
+			"" + SnoutKick.getSortType((String)sortType.getSelectedItem()));
 	}
 	// end AbstractOptionPane implementation
 

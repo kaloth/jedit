@@ -39,7 +39,7 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 {
 	private JButton add;
 	private JButton remove;
-	private Choice profile;
+	private JComboBox<String> profile;
 	
 	public SplitPaneOptionPane()
 	{
@@ -48,7 +48,7 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 
 	private void updateProfileList()
 	{
-		profile.removeAll();
+		profile.removeAllItems();
 		
 		String profiles = jEdit.getProperty(
 			SplitPanePlugin.OPTION_PREFIX + "profiles");
@@ -61,7 +61,7 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 			{
 				if(!profile_list[n].equals(""))
 				{
-					profile.add(profile_list[n]);
+					profile.addItem(profile_list[n]);
 				}
 			}
 		}
@@ -144,10 +144,12 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 		panel.add(new JLabel("Profile Name"));
 		panel.add(profile_tf);
 		
+		// Todo: make this a drop down?
 		final JTextField plugin1_tf = new JTextField();
 		panel.add(new JLabel("Plugin One"));
 		panel.add(plugin1_tf);
 		
+		// Todo: make this a drop down?
 		final JTextField plugin2_tf = new JTextField();
 		panel.add(new JLabel("Plugin Two"));
 		panel.add(plugin2_tf);
@@ -167,7 +169,7 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 					addProfile(name, plugin1, plugin2);
 				}
 				
-				diag.hide();
+				diag.setVisible(false);
 			}
 		});
 		button_panel.add(ok);
@@ -177,13 +179,13 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				diag.hide();
+				diag.setVisible(false);
 			}
 		});
 		button_panel.add(cancel);
 		
 		diag.pack();
-		diag.show();
+		diag.setVisible(true);
 	}
 	
 	public void _init()
@@ -199,7 +201,7 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 			}
 		});
 		
-		profile = new Choice();
+		profile = new JComboBox();
 		
 		updateProfileList();
 		
@@ -214,7 +216,7 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				removeProfile(profile.getSelectedItem());
+				removeProfile((String)profile.getSelectedItem());
 			}
 		});
 	}
