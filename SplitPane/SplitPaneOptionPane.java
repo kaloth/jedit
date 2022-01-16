@@ -37,8 +37,7 @@ import org.gjt.sp.jedit.Macros.*;
 
 public class SplitPaneOptionPane extends AbstractOptionPane
 {
-	private JButton add;
-	private JButton remove;
+	private JButton add, edit, remove;
 	private JComboBox<String> profile;
 	
 	public SplitPaneOptionPane()
@@ -46,7 +45,7 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 		super(SplitPanePlugin.NAME);
 	}
 
-	private void updateProfileList()
+	private void updateProfileList(String select)
 	{
 		profile.removeAllItems();
 		
@@ -63,6 +62,11 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 				{
 					profile.addItem(profile_list[n]);
 				}
+			}
+			
+			if (select != null)
+			{
+				profile.setSelectedItem(select);
 			}
 		}
 	}
@@ -91,7 +95,7 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 		jEdit.setProperty(
 			SplitPanePlugin.OPTION_PREFIX + "profile-" + profilename, null);
 		
-		updateProfileList();
+		updateProfileList(null);
 	}
 	
 	private void addProfile(String profilename, String plugin1, String plugin2)
@@ -119,10 +123,10 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 		jEdit.setProperty(
 			SplitPanePlugin.OPTION_PREFIX + "profile-" + profilename, plugin1 + "|" + plugin2);
 		
-		updateProfileList();
+		updateProfileList(profilename);
 	}
 	
-	private void showNewProfileDialog()
+	private void showEditProfileDialog(String name, String one, String two)
 	{
 		Component parent = getParent();
 		
@@ -140,17 +144,17 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 		diag.add(button_panel, BorderLayout.SOUTH);
 		
 		panel.setLayout(new GridLayout(3,2));
-		final JTextField profile_tf = new JTextField();
+		final JTextField profile_tf = new JTextField(name);
 		panel.add(new JLabel("Profile Name"));
 		panel.add(profile_tf);
 		
 		// Todo: make this a drop down?
-		final JTextField plugin1_tf = new JTextField();
+		final JTextField plugin1_tf = new JTextField(one);
 		panel.add(new JLabel("Plugin One"));
 		panel.add(plugin1_tf);
 		
 		// Todo: make this a drop down?
-		final JTextField plugin2_tf = new JTextField();
+		final JTextField plugin2_tf = new JTextField(two);
 		panel.add(new JLabel("Plugin Two"));
 		panel.add(plugin2_tf);
 		
@@ -197,17 +201,39 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				showNewProfileDialog();
+				showEditProfileDialog("", "", "");
 			}
 		});
 		
 		profile = new JComboBox();
 		
-		updateProfileList();
+		updateProfileList(null);
 		
 		addComponent(jEdit.getProperty(
 			SplitPanePlugin.OPTION_PREFIX + "choose-profile.title"),
 			profile);
+		
+		edit = new JButton(jEdit.getProperty(
+			SplitPanePlugin.OPTION_PREFIX + "edit.title"));
+		addComponent("", edit);
+		edit.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				String profilename = (String)profile.getSelectedItem();
+				
+				String profile = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + "profile-" + profilename);
+				if(profile != null)
+				{
+					String[] names = profile.split("\\|");
+					
+					if(names.length == 2)
+					{
+						showEditProfileDialog(profilename, names[0], names[1]);
+					}
+				}
+			}
+		});
 		
 		remove = new JButton(jEdit.getProperty(
 			SplitPanePlugin.OPTION_PREFIX + "remove.title"));

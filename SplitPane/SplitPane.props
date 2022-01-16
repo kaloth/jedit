@@ -36,9 +36,10 @@ options.SplitPane.code=new SplitPaneOptionPane();
 
 # Option pane labels
 options.SplitPane.label=SplitPane
-options.SplitPane.choose-profile.title=Edit Profile:
+options.SplitPane.choose-profile.title=Select Profile:
 options.SplitPane.add.title=Add New Profile
 options.SplitPane.remove.title=Remove Profile
+options.SplitPane.edit.title=Edit Profile
 
 # window title
 SplitPane.title=SplitPane
