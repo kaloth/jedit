@@ -1,10 +1,9 @@
-import org.gjt.sp.jedit.*;
-
 import java.awt.*;
 import java.net.*;
 import java.util.*;
 import java.lang.reflect.*;
 
+import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.Macros.*;
 
 /**
@@ -19,12 +18,19 @@ public class PluginLoader{
 	private PluginClassLoader classloader;
 	private ClassLoader baseloader;
 	
+	private View view;
+	private String position;
+	
+	private HashMap<String, Component> plugin_cache = new HashMap();
+	
 	/**
 	 * Create a new PluginLoader
 	 */
-	public PluginLoader(){
+	public PluginLoader(View view, String position){
 		classloader = new PluginClassLoader();
 		baseloader = getClass().getClassLoader();
+		this.view = view;
+		this.position = position;
 	}
 	
 	/**
@@ -32,8 +38,13 @@ public class PluginLoader{
 	 * 
 	 * @param className The 'binary name' of the class..
 	 */
-	public Component getInstanceOf(String className, View view, String position){
+	public Component getInstanceOf(String className){
 		Component inst = null;
+		
+		if (plugin_cache.containsKey(className))
+		{
+			return plugin_cache.get(className);
+		}
 		
 		try{
 			Class theClass = classloader.loadClass(className, true);
@@ -90,6 +101,8 @@ public class PluginLoader{
 			e.printStackTrace();
 			Macros.message(view, "Loading \"" + className + "\" failed.\nReason: " + e.getMessage());
 		}
+		
+		plugin_cache.put(className, inst);
 		
 		return inst;
 	}

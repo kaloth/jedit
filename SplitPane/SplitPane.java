@@ -43,7 +43,7 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	private String position;
 	private boolean floating;
 	
-	private PluginLoader pluginLoader = new PluginLoader();
+	private PluginLoader pluginLoader;
 	private JSplitPane jsp = new JSplitPane();
 	
 	private JComboBox<String> profile = new JComboBox();
@@ -58,6 +58,8 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		this.view = view;
 		this.position = position;
 		this.floating = position.equals(DockableWindowManager.FLOATING);
+		
+		pluginLoader = new PluginLoader(view, position);
 		
 		buildGUI();
 		propertiesChanged();
@@ -152,8 +154,8 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	
 	private Object[] loadPlugins(String plug1, String plug2)
 	{
-		Component plugin1 = pluginLoader.getInstanceOf(plug1, view, position);
-		Component plugin2 = pluginLoader.getInstanceOf(plug2, view, position);
+		Component plugin1 = pluginLoader.getInstanceOf(plug1);
+		Component plugin2 = pluginLoader.getInstanceOf(plug2);
 		
 		if(plugin1 == null)
 		{
@@ -165,25 +167,10 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 			plugin2 = new JLabel("Failed to load \"" + plug2 + "\".");
 		}
 		
-		remove(jsp);
-		
-		if(floating || position.equals(DockableWindowManager.RIGHT) || position.equals(DockableWindowManager.LEFT))
-		{
-			jsp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, plugin1, plugin2);
-		}
-		else
-		{
-			jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plugin1, plugin2);
-		}
-		
-		jsp.setResizeWeight(0.5);
-		
-		add(jsp, BorderLayout.CENTER);
-		
-		invalidate();
-		doLayout();
-		
-		jsp.setDividerLocation(0.5);
+		int loc = jsp.getDividerLocation();
+		jsp.setLeftComponent(plugin1);
+		jsp.setRightComponent(plugin2);
+		jsp.setDividerLocation(loc);
 		
 		return new Object[]{plugin1, plugin2};
 	}
@@ -198,7 +185,22 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		}else{
 			add(profile, BorderLayout.NORTH);
 		}
+		
+		if(floating || position.equals(DockableWindowManager.RIGHT) || position.equals(DockableWindowManager.LEFT))
+		{
+			jsp = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		}
+		else
+		{
+			jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		}
+		
+		jsp.setResizeWeight(0.5);
+		add(jsp, BorderLayout.CENTER);
+		
 		doLayout();
+		
+		jsp.setDividerLocation(0.5);
 		
 		profile.addItemListener(new ItemListener()
 		{
