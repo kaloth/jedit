@@ -22,7 +22,7 @@ plugin.SnoutPlugin.menu=Snout \
 	- \
 	Snout.search \
 	Snout.addCurrentDirectoryToIndex \
-	Snout.refreshIndex \
+	Snout.refreshIndex
 
 # action labels for actions supplied by dockables.xml
 Snout.label=Snout
