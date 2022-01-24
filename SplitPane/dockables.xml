@@ -7,7 +7,16 @@
 <!-- SplitPane dockable windows -->
 
 <DOCKABLES>
-	<DOCKABLE NAME="SplitPane">
-		new SplitPane(view, position);
+	<DOCKABLE NAME="SplitPane_Panel_1">
+		new SplitPane(view, position, "Panel_1");
+	</DOCKABLE>
+	<DOCKABLE NAME="SplitPane_Panel_2">
+		new SplitPane(view, position, "Panel_2");
+	</DOCKABLE>
+	<DOCKABLE NAME="SplitPane_Panel_3">
+		new SplitPane(view, position, "Panel_3");
+	</DOCKABLE>
+	<DOCKABLE NAME="SplitPane_Panel_4">
+		new SplitPane(view, position, "Panel_4");
 	</DOCKABLE>
 </DOCKABLES>

@@ -18,15 +18,22 @@ plugin.SplitPanePlugin.docs=index.html
 plugin.SplitPanePlugin.depend.0=jedit 04.02.01.00
 
 # plugin menu
-plugin.SplitPanePlugin.menu=SplitPane \
-	- \
-	SplitPane.refresh \
+plugin.SplitPanePlugin.menu=SplitPane_Panel_1 \
+	SplitPane_Panel_2 \
+	SplitPane_Panel_3 \
+	SplitPane_Panel_4
 
 # action labels for actions supplied by dockables.xml
-SplitPane.label=SplitPane
+SplitPane_Panel_1.label=Panel 1
+SplitPane_Panel_2.label=Panel 2
+SplitPane_Panel_3.label=Panel 3
+SplitPane_Panel_4.label=Panel 4
 
-# action labels for actions supplied by actions.xml
-SplitPane.refresh.label=Refresh View
+# window title
+SplitPane_Panel_1.title=SplitPane 1
+SplitPane_Panel_2.title=SplitPane 2
+SplitPane_Panel_3.title=SplitPane 3
+SplitPane_Panel_4.title=SplitPane 4
 
 # plugin option pane
 plugin.SplitPanePlugin.option-pane=SplitPane
@@ -40,15 +47,3 @@ options.SplitPane.choose-profile.title=Select Profile:
 options.SplitPane.add.title=Add New Profile
 options.SplitPane.remove.title=Remove Profile
 options.SplitPane.edit.title=Edit Profile
-
-# window title
-SplitPane.title=SplitPane
-
-# window toolbar buttons
-SplitPane.choose-file.icon=Open.png
-SplitPane.save-file.icon=Save.png
-SplitPane.copy-to-buffer.icon=CopyToBuffer.png
-
-# Setting not defined but supplied for completeness
-options.SplitPane.sorttype=0
-options.SplitPane.versions=false

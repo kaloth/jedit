@@ -39,6 +39,7 @@ import org.gjt.sp.util.Log;
 
 public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 {
+	private String name;
 	private View view;
 	private String position;
 	private boolean floating;
@@ -51,10 +52,11 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	private Object[] plugins;
 	private String[] names;
 	
-	public SplitPane(View view, String position)
+	public SplitPane(View view, String position, String name)
 	{
 		super(new BorderLayout());
 		
+		this.name = name;
 		this.view = view;
 		this.position = position;
 		this.floating = position.equals(DockableWindowManager.FLOATING);
@@ -82,6 +84,18 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		return null;
 	}
 	
+	private void LogMsg(int urgency, java.lang.Object source, java.lang.Object message)
+	{
+		Log.log(urgency, source, message);
+		//Log.flushStream();
+	}
+	
+	private void LogMsg(int urgency, java.lang.Object source, java.lang.Object message, Exception e)
+	{
+		Log.log(urgency, source, message, e);
+		//Log.flushStream();
+	}
+	
 	/**
 	* EditBus message handling.
 	*/
@@ -105,10 +119,15 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	
 	private void updateProfileList()
 	{
+		String profilename = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + this.name + "_current-profile");
+		
 		profile.removeAllItems();
 		
 		String profiles = jEdit.getProperty(
 			SplitPanePlugin.OPTION_PREFIX + "profiles");
+		
+		LogMsg(Log.DEBUG, SplitPane.class,
+				this.name + " Fetching Profile List: " + profiles);
 		
 		if(profiles != null)
 		{
@@ -123,10 +142,16 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 			}
 		}
 		
-		String profilename = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + "current-profile");
-		
 		if(profilename != null)
 		{
+			LogMsg(Log.DEBUG, SplitPane.class,
+				this.name + " Restoring Current Profile (updateProfileList): " + profilename);
+			profile.setSelectedItem(profilename);
+		}
+		else if(profile.getItemCount() > 0)
+		{
+			// first time? Just load the first profile available.
+			profilename = profile.getItemAt(0);
 			profile.setSelectedItem(profilename);
 		}
 	}
@@ -138,7 +163,10 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	
 	private void loadProfile(String profilename)
 	{
-		jEdit.setProperty(SplitPanePlugin.OPTION_PREFIX + "current-profile", profilename);
+		LogMsg(Log.DEBUG, SplitPane.class,
+				this.name + " Loading Profile: " + profilename);
+		
+		jEdit.setProperty(SplitPanePlugin.OPTION_PREFIX + this.name + "_current-profile", profilename);
 		
 		String profile = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + "profile-" + profilename);
 		if(profile != null)
@@ -212,20 +240,6 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 				}
 			}
 		});
-		
-		String profilename = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + "current-profile");
-		
-		if(profilename != null)
-		{
-			profile.setSelectedItem(profilename);
-			loadProfile(profilename);
-		}
-		else if(profile.getItemCount() > 0)
-		{
-			// first time? Just load the first profile available.
-			profilename = profile.getItemAt(0);
-			loadProfile(profilename);
-		}
 	}
 }
 
