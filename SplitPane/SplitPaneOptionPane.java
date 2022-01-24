@@ -29,9 +29,10 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.util.*;
 
 import org.gjt.sp.jedit.*;
-
+import org.gjt.sp.jedit.gui.DockableWindowManager;
 import org.gjt.sp.jedit.Macros.*;
 
 
@@ -149,14 +150,33 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 		panel.add(profile_tf);
 		
 		// Todo: make this a drop down?
-		final JTextField plugin1_tf = new JTextField(one);
+		final JComboBox<String> plugin1_choice = new JComboBox();
 		panel.add(new JLabel("Plugin One"));
-		panel.add(plugin1_tf);
+		panel.add(plugin1_choice);
 		
 		// Todo: make this a drop down?
-		final JTextField plugin2_tf = new JTextField(two);
+		final JComboBox<String> plugin2_choice = new JComboBox();
 		panel.add(new JLabel("Plugin Two"));
-		panel.add(plugin2_tf);
+		panel.add(plugin2_choice);
+		
+		ArrayList<String> dockables = new ArrayList<String>();
+		for (String dockable : DockableWindowManager.getRegisteredDockableWindows())
+		{
+			dockables.add(dockable);
+		}
+		Collections.sort(dockables, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {              
+				return o1.compareToIgnoreCase(o2);
+			}
+		});
+		for (String dockable : dockables)
+		{
+			plugin1_choice.addItem(dockable);
+			plugin2_choice.addItem(dockable);
+		}
+		plugin1_choice.setSelectedItem(one);
+		plugin2_choice.setSelectedItem(two);
 		
 		button_panel.setLayout(new FlowLayout());
 		JButton ok = new JButton("Ok");
@@ -165,8 +185,8 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 			public void actionPerformed(ActionEvent e)
 			{
 				String name = profile_tf.getText().trim();
-				String plugin1 = plugin1_tf.getText().trim();
-				String plugin2 = plugin2_tf.getText().trim();
+				String plugin1 = (String)plugin1_choice.getSelectedItem();
+				String plugin2 = (String)plugin2_choice.getSelectedItem();
 				
 				if(!name.equals("") && !plugin1.equals("") && !plugin2.equals(""))
 				{

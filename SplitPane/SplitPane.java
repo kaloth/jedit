@@ -119,40 +119,42 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	
 	private void updateProfileList()
 	{
-		String profilename = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + this.name + "_current-profile");
-		
-		profile.removeAllItems();
-		
-		String profiles = jEdit.getProperty(
-			SplitPanePlugin.OPTION_PREFIX + "profiles");
-		
-		LogMsg(Log.DEBUG, SplitPane.class,
-				this.name + " Fetching Profile List: " + profiles);
-		
-		if(profiles != null)
+		synchronized(profile)
 		{
-			String profile_list[] = profiles.split("\\|");
+			String profilename = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + this.name + "_current-profile");
 			
-			for(int n = 0; n < profile_list.length; n++)
+			profile.removeAllItems();
+			
+			String profiles = jEdit.getProperty(
+				SplitPanePlugin.OPTION_PREFIX + "profiles");
+			
+			LogMsg(Log.DEBUG, SplitPane.class,
+					this.name + " Fetching Profile List: " + profiles);
+			
+			if(profiles != null)
 			{
-				if(!profile_list[n].equals(""))
+				String profile_list[] = profiles.split("\\|");
+				for(int n = 0; n < profile_list.length; n++)
 				{
-					profile.addItem(profile_list[n]);
+					if(!profile_list[n].equals(""))
+					{
+						profile.addItem(profile_list[n]);
+					}
 				}
 			}
-		}
-		
-		if(profilename != null)
-		{
-			LogMsg(Log.DEBUG, SplitPane.class,
-				this.name + " Restoring Current Profile (updateProfileList): " + profilename);
-			profile.setSelectedItem(profilename);
-		}
-		else if(profile.getItemCount() > 0)
-		{
-			// first time? Just load the first profile available.
-			profilename = profile.getItemAt(0);
-			profile.setSelectedItem(profilename);
+			
+			if(profilename != null)
+			{
+				LogMsg(Log.DEBUG, SplitPane.class,
+					this.name + " Restoring Current Profile (updateProfileList): " + profilename);
+				profile.setSelectedItem(profilename);
+			}
+			else if(profile.getItemCount() > 0)
+			{
+				// first time? Just load the first profile available.
+				profilename = profile.getItemAt(0);
+				profile.setSelectedItem(profilename);
+			}
 		}
 	}
 
@@ -180,10 +182,34 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		}
 	}
 	
+	private Component loadPlugin(String plug)
+	{
+		// Use the DWM to load the plugins and steal them, mwahahhaha!
+		DockableWindowManager dwm = this.view.getDockableWindowManager();
+		
+		if (!dwm.isDockableWindowVisible(plug))
+		{
+			dwm.showDockableWindow(plug);
+		}
+		
+		Component plugin = dwm.getDockable(plug);
+		
+		// todo: If not floating, float it?
+		
+		// In a Window? Hide the window
+		Window window = SwingUtilities.getWindowAncestor(plugin);
+		if (window != null && this.view != window)
+		{
+			window.setVisible(false);
+		}
+		
+		return plugin;
+	}
+	
 	private Object[] loadPlugins(String plug1, String plug2)
 	{
-		Component plugin1 = pluginLoader.getInstanceOf(plug1);
-		Component plugin2 = pluginLoader.getInstanceOf(plug2);
+		Component plugin1 = loadPlugin(plug1);
+		Component plugin2 = loadPlugin(plug2);
 		
 		if(plugin1 == null)
 		{
@@ -196,8 +222,18 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		}
 		
 		int loc = jsp.getDividerLocation();
-		jsp.setLeftComponent(plugin1);
-		jsp.setRightComponent(plugin2);
+		
+		if (plugin1 != jsp.getLeftComponent())
+		{
+			plugin1.setVisible(true);
+			jsp.setLeftComponent(plugin1);
+		}
+		if (plugin2 != jsp.getRightComponent())
+		{
+			plugin2.setVisible(true);
+			jsp.setRightComponent(plugin2);
+		}
+		
 		jsp.setDividerLocation(loc);
 		
 		return new Object[]{plugin1, plugin2};
@@ -236,7 +272,10 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 			{
 				if(e.getStateChange() == e.SELECTED)
 				{
-					loadProfile((String)profile.getSelectedItem());
+					synchronized(profile)
+					{
+						loadProfile((String)profile.getSelectedItem());
+					}
 				}
 			}
 		});
