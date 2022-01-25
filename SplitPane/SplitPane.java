@@ -47,6 +47,7 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	private JSplitPane jsp = new JSplitPane();
 	
 	private JComboBox<String> profile = new JComboBox();
+	private ItemListener profile_listener;
 	
 	private Object[] plugins;
 	private String[] names;
@@ -60,18 +61,14 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		this.position = position;
 		this.floating = position.equals(DockableWindowManager.FLOATING);
 		
-		buildGUI();
-		propertiesChanged();
-	}
-	
-	public void start()
-	{
-		
-	}
-	
-	public void stop()
-	{
-		
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				buildGUI();
+				propertiesChanged();
+			}
+		});
 	}
 	
 	public Object getDockable(String name)
@@ -120,6 +117,10 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		{
 			String profilename = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + this.name + "_current-profile");
 			
+			if (profile_listener != null)
+			{
+				profile.removeItemListener(profile_listener);
+			}
 			profile.removeAllItems();
 			
 			String profiles = jEdit.getProperty(
@@ -152,6 +153,13 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 				profilename = profile.getItemAt(0);
 				profile.setSelectedItem(profilename);
 			}
+			
+			if (profile_listener != null)
+			{
+				profile.addItemListener(profile_listener);
+			}
+			
+			loadProfile(profilename);
 		}
 	}
 
@@ -263,7 +271,7 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		
 		jsp.setDividerLocation(0.5);
 		
-		profile.addItemListener(new ItemListener()
+		profile_listener = new ItemListener()
 		{
 			public void itemStateChanged(ItemEvent e)
 			{
@@ -275,7 +283,9 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 					}
 				}
 			}
-		});
+		};
+		
+		profile.addItemListener(profile_listener);
 	}
 }
 
