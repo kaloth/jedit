@@ -44,7 +44,6 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	private String position;
 	private boolean floating;
 	
-	private PluginLoader pluginLoader;
 	private JSplitPane jsp = new JSplitPane();
 	
 	private JComboBox<String> profile = new JComboBox();
@@ -60,8 +59,6 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		this.view = view;
 		this.position = position;
 		this.floating = position.equals(DockableWindowManager.FLOATING);
-		
-		pluginLoader = new PluginLoader(view, position);
 		
 		buildGUI();
 		propertiesChanged();
