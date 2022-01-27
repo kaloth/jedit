@@ -24,6 +24,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.beans.*;
 
 // from Swing:
 import javax.swing.*;
@@ -269,7 +270,16 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		
 		doLayout();
 		
-		jsp.setDividerLocation(0.5);
+		String str_loc = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + this.name + "_divider-location");
+		if (str_loc != null)
+		{
+			int loc = Integer.parseInt(str_loc);
+			jsp.setDividerLocation(loc);
+		}
+		else
+		{
+			jsp.setDividerLocation(0.5);
+		}
 		
 		profile_listener = new ItemListener()
 		{
@@ -286,6 +296,22 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		};
 		
 		profile.addItemListener(profile_listener);
+		
+		final String divider_property_name = SplitPanePlugin.OPTION_PREFIX + this.name + "_divider-location";
+		jsp.addPropertyChangeListener(new PropertyChangeListener()
+		{
+            public void propertyChange(PropertyChangeEvent changeEvent)
+            {
+                JSplitPane sourceSplitPane = (JSplitPane) changeEvent.getSource();
+                String propertyName = changeEvent.getPropertyName();
+                
+                if (propertyName.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY))
+                {
+                    int loc = sourceSplitPane.getDividerLocation();
+                    jEdit.setProperty(divider_property_name, ""+loc);
+                }
+            }
+        });
 	}
 }
 
