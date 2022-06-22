@@ -1,0 +1,48 @@
+# This workflow will build a Java project with Ant
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-ant
+
+name: Java CI (8)
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 8
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+    
+    - name: Install JEdit
+      run: sudo apt-get install -y jedit
+    
+    - name: Build Snacky
+      working-directory: ./Snacky
+      run: ant -noinput -buildfile build.xml
+    - name: Build Snout
+      working-directory: ./Snout
+      run: ant -noinput -buildfile build.xml
+    - name: Build SnoutKick
+      working-directory: ./SnoutKick
+      run: ant -noinput -buildfile build.xml
+    - name: Build SplitPane
+      working-directory: ./SplitPane
+      run: ant -noinput -buildfile build.xml
+    - name: Build Spork
+      working-directory: ./Spork
+      run: ant -noinput -buildfile build.xml
+      
+    - name: Archive binaries
+      uses: actions/upload-artifact@v2
+      with:
+        name: binaries
+        path: /home/runner/jedit/jars/*.jar
