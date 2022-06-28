@@ -107,7 +107,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 	private Component viewportView = null;
 	
 	private Stack update_queue = new Stack();
-	private Hashtable<String, ImageIcon> marker_cache = new Hashtable();
+	private Hashtable<String, JLabel> marker_cache = new Hashtable();
 	
 	private ImageIcon status_none;
 	private ImageIcon status_open;
@@ -116,13 +116,13 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 	private ImageIcon status_lockconflict;
 	private ImageIcon status_openconflict;
 	
-	private ImageIcon marker_none;
-	private ImageIcon marker_red;
-	private ImageIcon marker_green;
-	private ImageIcon marker_blue;
-	private ImageIcon marker_cyan;
-	private ImageIcon marker_purple;
-	private ImageIcon marker_yellow;
+	private JLabel marker_none;
+	private JLabel marker_red;
+	private JLabel marker_green;
+	private JLabel marker_blue;
+	private JLabel marker_cyan;
+	private JLabel marker_purple;
+	private JLabel marker_yellow;
 	
 	private JPopupMenu menu;
 	
@@ -133,9 +133,9 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 	private String logindir = null;
 	private JDialog loginDiag = new JDialog((Frame)null, "Perforce Password Required", false);
 
-	private Hashtable<String, ImageIcon> marker_map = new Hashtable();
+	private Hashtable<String, JLabel> marker_map = new Hashtable();
 	
-	private ImageIcon createMarkerIcon(Color colour, String name)
+	private JLabel createMarkerIcon(Color colour, String name)
 	{
 		BufferedImage img;
 		Graphics g;
@@ -148,9 +148,11 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		g.drawRoundRect(2,2,8,8,2,2);
 		
 		ImageIcon icon =  new ImageIcon(img, name);
-		marker_map.put(name, icon);
 		
-		return icon;
+		JLabel label = new JLabel("0", icon, JLabel.RIGHT);
+		marker_map.put(name, label);
+		
+		return label;
 	}
 	
 	private ImageIcon createStatusIcon(Color colour, String name)
@@ -190,7 +192,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		
 		img = new BufferedImage(12,12,BufferedImage.TYPE_INT_ARGB);
 		status_none = new ImageIcon(img);
-		marker_none = status_none;
+		marker_none = new JLabel("", status_none, JLabel.RIGHT);
 		
 		status_open = createStatusIcon(Color.WHITE, "open");
 		status_add = createStatusIcon(Color.YELLOW, "add");
@@ -205,10 +207,11 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		marker_purple = createMarkerIcon(new Color(180, 0, 240), "purple");
 		marker_yellow = createMarkerIcon(Color.YELLOW, "yellow");
 		
-		filtbox_marker = new JComboBox(new ImageIcon[]{
+		filtbox_marker = new JComboBox(new JLabel[]{
 			marker_none, marker_red, marker_green, marker_blue,
 			marker_cyan, marker_purple, marker_yellow
 		});
+		filtbox_marker.setRenderer(new FiltboxRenderer());
 		
 		buildBufferMenu();
 		loadMarkers();
@@ -370,9 +373,9 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		try {
 			FileWriter fw = new FileWriter(marker_file);
 			
-			for (Map.Entry<String, ImageIcon> marker : marker_cache.entrySet())
+			for (Map.Entry<String, JLabel> marker : marker_cache.entrySet())
 			{
-				fw.write(marker.getKey() + " " + marker.getValue().getDescription() + "\n");
+				fw.write(marker.getKey() + " " + ((ImageIcon)marker.getValue().getIcon()).getDescription() + "\n");
 			}
 			
 			fw.close();
@@ -393,8 +396,10 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 				line = line.trim();
 				int i = line.lastIndexOf(' ');
 				String path = line.substring(0, i);
-				String marker = line.substring(i+1);
-				marker_cache.put(path, marker_map.get(marker));
+				String marker_name = line.substring(i+1);
+				JLabel marker = marker_map.get(marker_name);
+				marker_cache.put(path, marker);
+				marker.setText("" + (Integer.parseInt(marker.getText()) + 1));
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -620,7 +625,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		
 		String dir = "";
 		String filter = filtbox_name.getText().trim().toLowerCase();
-		ImageIcon filter_mark = (ImageIcon)filtbox_marker.getSelectedItem();
+		JLabel filter_mark = (JLabel)filtbox_marker.getSelectedItem();
 		if(filter.length() == 0)
 		{
 			filter = null;
@@ -647,7 +652,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 			
 			if (filter_mark != null && filter_mark != marker_none)
 			{
-				if (filter_mark != (ImageIcon)marker_cache.get(buf.getPath()))
+				if (filter_mark != (JLabel)marker_cache.get(buf.getPath()))
 				{
 					continue;
 				}
@@ -1048,7 +1053,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		 */
 		submenu = new JMenu("Markers");
 		
-		JMenuItem mark_none = new JMenuItem("Clear Marker", marker_none);
+		JMenuItem mark_none = new JMenuItem("Clear Marker", marker_none.getIcon());
 		mark_none.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -1063,7 +1068,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		submenu.add(mark_none);
 		submenu.add(new JPopupMenu.Separator());
 		
-		JMenuItem mark_red = new JMenuItem("Mark Red", marker_red);
+		JMenuItem mark_red = new JMenuItem("Mark Red", marker_red.getIcon());
 		mark_red.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -1077,7 +1082,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		});
 		submenu.add(mark_red);
 		
-		JMenuItem mark_green = new JMenuItem("Mark Green", marker_green);
+		JMenuItem mark_green = new JMenuItem("Mark Green", marker_green.getIcon());
 		mark_green.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -1091,7 +1096,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		});
 		submenu.add(mark_green);
 		
-		JMenuItem mark_blue = new JMenuItem("Mark Blue", marker_blue);
+		JMenuItem mark_blue = new JMenuItem("Mark Blue", marker_blue.getIcon());
 		mark_blue.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -1105,7 +1110,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		});
 		submenu.add(mark_blue);
 		
-		JMenuItem mark_cyan = new JMenuItem("Mark Cyan", marker_cyan);
+		JMenuItem mark_cyan = new JMenuItem("Mark Cyan", marker_cyan.getIcon());
 		mark_cyan.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -1119,7 +1124,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		});
 		submenu.add(mark_cyan);
 		
-		JMenuItem mark_purple = new JMenuItem("Mark Purple", marker_purple);
+		JMenuItem mark_purple = new JMenuItem("Mark Purple", marker_purple.getIcon());
 		mark_purple.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -1133,7 +1138,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		});
 		submenu.add(mark_purple);
 		
-		JMenuItem mark_yellow = new JMenuItem("Mark Yellow", marker_yellow);
+		JMenuItem mark_yellow = new JMenuItem("Mark Yellow", marker_yellow.getIcon());
 		mark_yellow.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -1404,7 +1409,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		
 	}
 	
-	private void markHighlightedBuffers(ImageIcon icon){
+	private void markHighlightedBuffers(JLabel icon){
 		JPanel panel = (JPanel)flist.getViewport().getView();
 		
 		Component[] rlabels = panel.getComponents();
@@ -1957,7 +1962,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 		public JLabel status, name, version;
 		public Buffer buf;
 		private String dir;
-		private ImageIcon marker;
+		private JLabel marker;
 		private MultiImageIcon icon = new MultiImageIcon();
 		private long fmod = 0;
 		
@@ -1966,13 +1971,13 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 			name = new JLabel(buf.getName());
 			dir = buf.getDirectory();
 			
-			marker = (ImageIcon)marker_cache.get(buf.getPath());
+			marker = marker_cache.get(buf.getPath());
 			if(marker == null)
 			{
 				marker = marker_none;
 			}
 			
-			icon.setImage(marker.getImage());
+			icon.setImage(((ImageIcon)(marker.getIcon())).getImage());
 			status = new JLabel();
 			status.setIcon(icon);
 			
@@ -2068,7 +2073,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 					{
 						icon.setOverlay(null);
 					}
-					status.setIcon(marker_none);
+					//status.setIcon((ImageIcon)marker_none.getIcon());
 					status.setIcon(icon);
 					
 					String haveRev = (String)p4.get("haveRev");
@@ -2103,9 +2108,19 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 			fmod = nfmod;
 		}
 		
-		public void setMarker(ImageIcon marker)
+		public void setMarker(JLabel marker)
 		{
+			JLabel old_marker = this.marker;
 			this.marker = marker;
+			
+			if (old_marker != marker_none)
+			{
+				old_marker.setText("" + (Integer.parseInt(old_marker.getText()) - 1));
+			}
+			if (marker != marker_none)
+			{
+				marker.setText("" + (Integer.parseInt(marker.getText()) + 1));
+			}
 			
 			if (marker != marker_none)
 			{
@@ -2113,11 +2128,12 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 			} else {
 				marker_cache.remove(buf.getPath());
 			}
-			icon.setImage(marker.getImage());
+			
+			icon.setImage(((ImageIcon)(marker.getIcon())).getImage());
 			
 			saveMarkers();
 			
-			status.setIcon(marker_none);
+			//status.setIcon(marker_none);
 			status.setIcon(icon);
 		}
 	}
@@ -2196,6 +2212,21 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 			{
 				g.drawImage(overlay.getImage(), x, y, c);
 			}
+		}
+	}
+	
+	private class FiltboxRenderer extends DefaultListCellRenderer
+	{
+		@Override
+		public Component getListCellRendererComponent(JList list, Object value, int index,boolean isSelected, boolean cellHasFocus)
+		{ 
+			JLabel marker = (JLabel) value;
+			JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus); 
+			
+			label.setText(marker.getText());
+			label.setIcon(marker.getIcon());
+			
+			return label;
 		}
 	}
 }
