@@ -390,7 +390,7 @@ public class Snacky extends JPanel implements EBComponent, SnackyActions, Defaul
 			String line;
 			while((line = buffy.readLine()) != null)
 			{
-				line = line.strip();
+				line = line.trim();
 				int i = line.lastIndexOf(' ');
 				String path = line.substring(0, i);
 				String marker = line.substring(i+1);
