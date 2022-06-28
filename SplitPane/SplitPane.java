@@ -203,10 +203,13 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		// todo: If not floating, float it?
 		
 		// In a Window? Hide the window
-		Window window = SwingUtilities.getWindowAncestor(plugin);
-		if (window != null && this.view != window)
+		if (plugin)
 		{
-			window.setVisible(false);
+			Window window = SwingUtilities.getWindowAncestor(plugin);
+			if (window != null && this.view != window)
+			{
+				window.setVisible(false);
+			}
 		}
 		
 		return plugin;
