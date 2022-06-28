@@ -52,7 +52,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 	public static final int SORT_BY_LINE = 0, SORT_BY_NAME = 1, SORT_BY_TYPE = 2, SORT_BY_STRUCTURE = 3;
 	
 	public static String getSortTypeName(String type){
-		return getSortTypeName((new Integer(type)).intValue());
+		return getSortTypeName(Integer.parseInt(type));
 	}
 	
 	public static String getSortTypeName(int type){
@@ -106,7 +106,6 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 	private JLabel label = new JLabel(" ");
 	private JTextField filtbox = new JTextField();
 	
-	private String ctagsdir = "C:\\ctags";
 	private String oldpath = "#~ NOT A FILENAME ~#";
 	private int oldline = -1;
 	
@@ -116,7 +115,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 	private String[] languageList = new String[]{};
 	
 	private String[] command = new String[]{
-				ctagsdir + "\\ctags",
+				"ctags",
 				"--excmd=n",
 				"-f",
 				"-"};
@@ -152,23 +151,6 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 		this.view = view;
 		this.floating  = position.equals(DockableWindowManager.FLOATING);
 		
-		if(jEdit.getSettingsDirectory() != null)
-		{
-			this.ctagsdir = jEdit.getProperty(
-				SnoutKickPlugin.OPTION_PREFIX + "ctagspath");
-			if(this.ctagsdir == null || this.ctagsdir.length() == 0)
-			{
-				this.ctagsdir = "C:\\ctags";
-				jEdit.setProperty(
-					SnoutKickPlugin.OPTION_PREFIX + "ctagspath",
-					this.ctagsdir);
-			}
-			else
-			{
-				command[0] = ctagsdir + "\\ctags";
-			}
-		}
-		
 		filtbox.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -178,11 +160,10 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 			}
 		});
 		
+		loadProperties();
 		applyEditorScheme();
 		buildGUI();
 		fetchLanguageList();
-		
-		
 		
 		listenToTextArea(jEdit.getActiveView().getTextArea());
 	}
@@ -351,16 +332,19 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 		
 		jtxttarget = jtxt;
 	}
+	
+	private void loadProperties()
+	{
+		command[0] = jEdit.getProperty(
+			SnoutKickPlugin.OPTION_PREFIX + "ctagspath");
+		
+		SortType = Integer.parseInt(jEdit.getProperty(
+			SnoutKickPlugin.OPTION_PREFIX + "sorttype"));
+	}
 
 	private void propertiesChanged()
 	{
-		ctagsdir = jEdit.getProperty(
-			SnoutKickPlugin.OPTION_PREFIX + "ctagspath");
-		
-		command[0] = ctagsdir + "\\ctags";
-		
-		SortType = (new Integer(jEdit.getProperty(
-			SnoutKickPlugin.OPTION_PREFIX + "sorttype"))).intValue();
+		loadProperties();
 		
 		fetchLanguageList();
 		
@@ -724,7 +708,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 				/* can be a line number or search pattern */
 				try
 				{
-					Integer ln = new Integer(stTags[2]);
+					Integer ln = Integer.parseInt(stTags[2]);
 					res.put("lineNum", ln);
 				} catch(NumberFormatException nfe) {
 					res.put("blurb", stTags[2]);

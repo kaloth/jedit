@@ -62,7 +62,6 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 	private JLabel label = new JLabel(" ");
 	private JComboBox txt = new JComboBox();
 	
-	private String ctagsdir = "C:/ctags";
 	private String workdir = jEdit.getSettingsDirectory() + "/snout";
 	private File index = new File(workdir + "/index.txt");
 	private File dirlist = new File(workdir + "/dirlist.txt");
@@ -73,7 +72,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 	private MouseAdapter mouseAdapter = null;
 	
 	private String[] command = new String[]{
-				ctagsdir + "/ctags",
+				"ctags",
 				"-o" + index.getPath(),
 				"-R",
 				"--excmd=p",
@@ -132,24 +131,8 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 		
 		this.view = view;
 		this.floating  = position.equals(DockableWindowManager.FLOATING);
-
-		if(jEdit.getSettingsDirectory() != null)
-		{
-			this.ctagsdir = jEdit.getProperty(
-				SnoutPlugin.OPTION_PREFIX + "ctagspath");
-			if(this.ctagsdir == null || this.ctagsdir.length() == 0)
-			{
-				this.ctagsdir = "C:\\ctags";
-				jEdit.setProperty(
-					SnoutPlugin.OPTION_PREFIX + "ctagspath",
-					this.ctagsdir);
-			}
-			else
-			{
-				command[0] = ctagsdir + "\\ctags";
-			}
-		}
 		
+		loadProperties();
 		applyEditorScheme();
 		buildGUI();
 		
@@ -286,16 +269,16 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 			propertiesChanged();
 		}
 	}
-
+	
+	private void loadProperties()
+	{
+		command[0] = jEdit.getProperty(
+			SnoutPlugin.OPTION_PREFIX + "ctagspath");
+	}
 
 	private void propertiesChanged()
 	{
-		ctagsdir = jEdit.getProperty(
-			SnoutPlugin.OPTION_PREFIX + "ctagspath");
-		
-		workdir = ctagsdir + "/snout";
-		
-		command[0] = ctagsdir + "/ctags";
+		loadProperties();
 		
 		applyEditorScheme();
 		
@@ -740,7 +723,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 					/* No blurb? look for a line number... */
 					i2 = line.indexOf(";\"");
 					if(i2 != -1){
-						res.put("lineNum", new Integer(line.substring(0, i2)));
+						res.put("lineNum", Integer.parseInt(line.substring(0, i2)));
 					}else{
 						continue;
 					}

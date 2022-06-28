@@ -92,8 +92,15 @@ public class SnoutKickOptionPane extends AbstractOptionPane
 	// begin ActionListener implementation
 	public void actionPerformed(ActionEvent evt)
 	{
+		String currentPath = pathName.getText();
+		if (currentPath.trim().length() == 0)
+		{
+			currentPath = null;
+		}
+		
 		String[] paths = GUIUtilities.showVFSFileDialog(null,
-			null,VFSBrowser.CHOOSE_DIRECTORY_DIALOG,false);
+			currentPath,VFSBrowser.OPEN_DIALOG,false);
+		
 		if(paths != null)
 		{
 			pathName.setText(paths[0]);
