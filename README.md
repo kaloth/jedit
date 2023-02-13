@@ -7,3 +7,4 @@ Various jedit plugins that I wrote over several years to improve my workflow.
 * SplitPane: Sidebar to nest two plugins one above the other
 * Spork: Forward / Backwards navigation between buffers
 * Spruce: MAML graphics previewer
+
