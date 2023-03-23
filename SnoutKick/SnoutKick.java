@@ -119,6 +119,8 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 				"--excmd=n",
 				"-f",
 				"-"};
+	
+	private javax.swing.Timer label_timer = null;
 
 	//
 	// Constructor
@@ -127,6 +129,8 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 	public SnoutKick(View view, String position)
 	{
 		super(new BorderLayout());
+		
+		setLabelMsg("");
 		
 		flist_scroll.getVerticalScrollBar().setUnitIncrement(15);
 		flist.setCellRenderer(new SnoutKickCellRenderer());
@@ -178,6 +182,50 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 	{
 		Log.log(urgency, source, message, e);
 		//Log.flushStream();
+	}
+	
+	private void setLabelMsg(String msg)
+	{
+		setLabelMsg(msg, 0);
+	}
+	
+	private void setLabelMsg(String msg, int clearAfter)
+	{
+		if (msg == null || msg.length() == 0)
+		{
+			label.setVisible(false);
+			label.setText("");
+		}
+		else
+		{
+			label.setText(msg);
+			label.setVisible(true);
+			
+			if (clearAfter > 0)
+			{
+				if (label_timer != null)
+				{
+					label_timer.stop();
+					label_timer.setDelay(clearAfter);
+					label_timer.setInitialDelay(clearAfter);
+					label_timer.start();
+				}
+				else
+				{
+					label_timer = new javax.swing.Timer(clearAfter, new ActionListener()
+					{
+						public void actionPerformed(ActionEvent e)
+						{
+							label.setVisible(false);
+							label.setText("");
+							label_timer = null;
+						}
+					});
+					label_timer.setRepeats(false);
+					label_timer.start();
+				}
+			}
+		}
 	}
 	
 	public void valueChanged(ListSelectionEvent e)
@@ -382,7 +430,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 			languageList = new String[v.size()];
 			v.toArray(languageList);
 		}catch(Exception e){
-			label.setText("FAILED: ctags did not run properly. Check it's location in the options menu.");
+			setLabelMsg("FAILED: ctags did not run properly. Check it's location in the options menu.");
 			LogMsg(Log.ERROR, SnoutKick.class,
 					"FAILED: ctags did not run properly. Check it's location in the options menu.", e);
 		}
@@ -410,12 +458,12 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 	// SnoutKickActions implementation
 	//
 	public synchronized void next(){
-		label.setText("Moving to next tag...");
+		setLabelMsg("Moving to next tag...");
 		flist.setSelectedIndex(flist.getSelectedIndex()+1);
 	}
 	
 	public synchronized void prev(){
-		label.setText("Moving to previous tag...");
+		setLabelMsg("Moving to previous tag...");
 		flist.setSelectedIndex(Math.max(0, flist.getSelectedIndex()-1));
 	}
 	
@@ -437,19 +485,19 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 		if(cached != null && cached.filter == filter)
 		{
 			currentResults = cached;
-			label.setText("Restoring Cached Results...");
+			setLabelMsg("Restoring Cached Results...");
 			LogMsg(Log.DEBUG, SnoutKick.class,
 				"Restoring Cached Results: " + jEdit.getActiveView().getBuffer().getPath());
 			flist.setListData(currentResults.v);
 			oldline = -1;
 			oldpath = jEdit.getActiveView().getBuffer().getPath();
-			label.setText(" ");
+			setLabelMsg("");
 			return true;
 		}
 		
 		boolean failed = false;
 		
-		label.setText("Building Command...");
+		setLabelMsg("Building Command...");
 		
 		/* Create the ctags command... */
 		Vector vcom = new Vector();
@@ -488,7 +536,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 		String[] fcom = new String[vcom.size()];
 		vcom.copyInto(fcom);
 		
-		label.setText("Running CTags...");
+		setLabelMsg("Running CTags...");
 		LogMsg(Log.DEBUG, SnoutKick.class,
 				"Running CTags: " + jEdit.getActiveView().getBuffer().getPath());
 		
@@ -510,7 +558,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 			try{
 				failed = !setSearchResults(v, filter);
 			}catch(Exception e){
-				//label.setText("FAILED: An internal error occurred.");
+				//setLabelMsg("FAILED: An internal error occurred.");
 				LogMsg(Log.ERROR, SnoutKick.class,
 					"FAILED: An internal error occurred.", e);
 				failed = true;
@@ -518,7 +566,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 				flist.removeAll();
 			}
 		}catch(Exception e){
-			label.setText("FAILED: ctags did not run properly. Check it's location in the options menu.");
+			setLabelMsg("FAILED: ctags did not run properly. Check it's location in the options menu.");
 			LogMsg(Log.ERROR, SnoutKick.class,
 					"FAILED: ctags did not run properly. Check it's location in the options menu.", e);
 			failed = true;
@@ -527,7 +575,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 		}
 		
 		if(!failed){
-			label.setText(" ");
+			setLabelMsg("");
 		}
 		
 		System.gc();
@@ -656,7 +704,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 			ResultSet newResults = new ResultSet();
 			newResults.filter = filter;
 			
-			label.setText("Building result table...");
+			setLabelMsg("Building result table...");
 			clearResults();
 			JPanel panel = new JPanel();
 			panel.setBackground(background_colour);
@@ -677,7 +725,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 				String line = (String)results.elementAt(n);
 				
 				if(n % 10 == 0){
-					label.setText("Building result table [" + (n+1) + "/" + results.size() + "]");
+					setLabelMsg("Building result table [" + (n+1) + "/" + results.size() + "]");
 				}
 				
 				Hashtable res = new Hashtable();
@@ -747,7 +795,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 				
 				addResult(newResults, res);
 			}
-			label.setText("Building result table [" + results.size() + "/" + results.size() + "]");
+			setLabelMsg("Building result table [" + results.size() + "/" + results.size() + "]");
 			
 			// Create a list of the tags sorted by line number...
 			newResults.lines = new Hashtable[results.size()];
@@ -950,7 +998,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 		}
 		else if(results.size() >= MAX_SEARCH_RESULTS)
 		{
-			label.setText("ERROR - Too many results!");
+			setLabelMsg("ERROR - Too many results!");
 			
 			currentResults = null;
 			flist.removeAll();
@@ -1045,7 +1093,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 				
 				String cl = getParentFullName();
 				
-				label.setText(name + " " + cl);
+				setLabelMsg(name + " " + cl);
 				
 				SnoutKickListItem cl_item = getParent(resSet);
 				

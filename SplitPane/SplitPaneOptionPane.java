@@ -27,7 +27,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
@@ -41,6 +43,8 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 	private JButton add, edit, remove;
 	private JComboBox<String> profile;
 	
+	private JComboBox<String>[] panel_profiles = new JComboBox[4];
+	
 	public SplitPaneOptionPane()
 	{
 		super(SplitPanePlugin.NAME);
@@ -50,6 +54,11 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 	{
 		profile.removeAllItems();
 		
+		for (int i = 0; i < panel_profiles.length; i++)
+		{
+			panel_profiles[i].removeAllItems();
+		}
+		
 		String profiles = jEdit.getProperty(
 			SplitPanePlugin.OPTION_PREFIX + "profiles");
 		
@@ -57,6 +66,7 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 		{
 			String profile_list[] = profiles.split("\\|");
 			
+			// Update the main profile list
 			for(int n = 0; n < profile_list.length; n++)
 			{
 				if(!profile_list[n].equals(""))
@@ -68,6 +78,25 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 			if (select != null)
 			{
 				profile.setSelectedItem(select);
+			}
+			
+			// Update the profile list for each panel selector
+			for (int i = 0; i < panel_profiles.length; i++)
+			{
+				String profilename = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + "Panel_" + (i+1) + "_current-profile");
+				
+				for(int n = 0; n < profile_list.length; n++)
+				{
+					if(!profile_list[n].equals(""))
+					{
+						panel_profiles[i].addItem(profile_list[n]);
+					}
+				}
+				
+				if (profilename != null)
+				{
+					panel_profiles[i].setSelectedItem(profilename);
+				}
 			}
 		}
 	}
@@ -227,6 +256,25 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 		
 		profile = new JComboBox();
 		
+		for (int i = 0; i < panel_profiles.length; i++)
+		{
+			final JComboBox<String> panel_profile = new JComboBox();
+			panel_profiles[i] = panel_profile;
+			final String profile_property_name = SplitPanePlugin.OPTION_PREFIX + "Panel_" + (i+1) + "_current-profile";
+			
+			panel_profile.addItemListener(new ItemListener()
+			{
+				public void itemStateChanged(ItemEvent e)
+				{
+					if(e.getStateChange() == e.SELECTED)
+					{
+						String profilename = (String)panel_profile.getSelectedItem();
+						jEdit.setProperty(profile_property_name, profilename);
+					}
+				}
+			});
+		}
+		
 		updateProfileList(null);
 		
 		addComponent(jEdit.getProperty(
@@ -265,6 +313,11 @@ public class SplitPaneOptionPane extends AbstractOptionPane
 				removeProfile((String)profile.getSelectedItem());
 			}
 		});
+		
+		for (int i = 0; i < panel_profiles.length; i++)
+		{
+			addComponent("Panel " + (i+1), panel_profiles[i]);
+		}
 	}
 
 	public void _save()

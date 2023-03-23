@@ -59,7 +59,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 	private Thread gotoThread = null;
 	
 	private JScrollPane flist = new JScrollPane();
-	private JLabel label = new JLabel(" ");
+	private JLabel label = new JLabel("");
 	private JComboBox txt = new JComboBox();
 	
 	private String workdir = jEdit.getSettingsDirectory() + "/snout";
@@ -81,6 +81,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 	private Icon defaultIcon;
 	
 	private String searchstr = null;
+	private javax.swing.Timer label_timer = null;
 
 	//
 	// Constructor
@@ -89,6 +90,8 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 	public Snout(View view, String position)
 	{
 		super(new BorderLayout());
+		
+		setLabelMsg("");
 		
 		flist.getVerticalScrollBar().setUnitIncrement(15);
 		txt.setEditable(true);
@@ -136,6 +139,12 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 		applyEditorScheme();
 		buildGUI();
 		
+		// put a blank panel in so we have something to show the background colour.
+		JPanel panel2 = new JPanel();
+		panel2.setBackground(background_colour);
+		panel2.setLayout(new BorderLayout());
+		flist.setViewportView(panel2);
+		
 		txt.addItemListener(new ItemListener(){
 			String last = "";
 			
@@ -164,6 +173,50 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 		//Log.flushStream();
 	}
 	
+	private void setLabelMsg(String msg)
+	{
+		setLabelMsg(msg, 0);
+	}
+	
+	private void setLabelMsg(String msg, int clearAfter)
+	{
+		if (msg == null || msg.length() == 0)
+		{
+			label.setVisible(false);
+			label.setText("");
+		}
+		else
+		{
+			label.setText(msg);
+			label.setVisible(true);
+			
+			if (clearAfter > 0)
+			{
+				if (label_timer != null)
+				{
+					label_timer.stop();
+					label_timer.setDelay(clearAfter);
+					label_timer.setInitialDelay(clearAfter);
+					label_timer.start();
+				}
+				else
+				{
+					label_timer = new javax.swing.Timer(clearAfter, new ActionListener()
+					{
+						public void actionPerformed(ActionEvent e)
+						{
+							label.setVisible(false);
+							label.setText("");
+							label_timer = null;
+						}
+					});
+					label_timer.setRepeats(false);
+					label_timer.start();
+				}
+			}
+		}
+	}
+	
 	private synchronized void gotoResult(final Hashtable res)
 	{
 		String path = ((File)res.get("file")).getPath();
@@ -172,17 +225,17 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 		if(buf == null){
 			LogMsg(Log.DEBUG, Snout.class,
 				"Opening File: " + path);
-			label.setText("Opening File: " + path);
+			setLabelMsg("Opening File: " + path);
 			buf = jEdit.openFile(jEdit.getActiveView(), path);
 		}else{
 			LogMsg(Log.DEBUG, Snout.class,
 				"Switching to Buffer: " + path);
-			label.setText("Switching to Buffer: " + path);
+			setLabelMsg("Switching to Buffer: " + path);
 			jEdit.getActiveView().setBuffer(buf);
 		}
 		
 		if(buf == null){
-			label.setText("Error: Couldn't open the file: " + path);
+			setLabelMsg("Error: Couldn't open the file: " + path);
 			LogMsg(Log.ERROR, Snout.class,
 				"Couldn't open the file: " + path);
 			gotoThread = null;
@@ -214,7 +267,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 					SearchAndReplace.setSearchFileSet(new CurrentBufferSet());
 					if(!SearchAndReplace.find(jEdit.getActiveView()))
 					{
-						label.setText("Error: Couldn't find search target!");
+						setLabelMsg("Error: Couldn't find search target!");
 						LogMsg(Log.ERROR, Snout.class,
 							"Couldn't find search target!");
 						gotoThread = null;
@@ -222,7 +275,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 					}
 					else
 					{
-						label.setText("Done");
+						setLabelMsg("");
 					}
 				}else if(lineNum > 0){
 					LogMsg(Log.DEBUG, Snout.class,
@@ -232,9 +285,9 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 					jEdit.getActiveView().getTextArea().scrollTo(lineNum, 0, false);
 					jEdit.getActiveView().getTextArea().setCaretPosition(jEdit.getActiveView().getTextArea().getLineStartOffset(lineNum));
 					jEdit.getActiveView().getTextArea().setSelection(new Selection.Range(jEdit.getActiveView().getTextArea().getLineStartOffset(lineNum), jEdit.getActiveView().getTextArea().getLineEndOffset(lineNum)));
-					label.setText("Done");
+					setLabelMsg("");
 				}else{
-					label.setText("Error: Search data was blank");
+					setLabelMsg("Error: Search data was blank");
 					LogMsg(Log.ERROR, Snout.class,
 							"Search data was blank");
 					gotoThread = null;
@@ -452,7 +505,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 			ex.printStackTrace();
 		}
 		
-		label.setText("Added: " + newDir);
+		setLabelMsg("Added: " + newDir);
 	}
 	
 	//
@@ -517,7 +570,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 				public void run(){
 					boolean failed = false;
 					
-					label.setText("Building Command...");
+					setLabelMsg("Building Command...");
 					
 					/* Create the ctags command... */
 					Vector vcom = new Vector();
@@ -557,7 +610,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 					
 					if(srccount == 0){
 						// No source files specified. Tell the user to enter some in the plugin options.
-						label.setText("STOPPED: Please add some source directories in the Snout options menu.");
+						setLabelMsg("STOPPED: Please add some source directories in the Snout options menu.");
 						workThread = null;
 						return;
 					}
@@ -565,7 +618,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 					String[] fcom = new String[vcom.size()];
 					vcom.copyInto(fcom);
 					
-					label.setText("Running CTags...");
+					setLabelMsg("Running CTags...");
 					
 					/* Run ctags to generate the index file... */
 					try{
@@ -575,7 +628,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 								Thread.currentThread().sleep(1000);
 								if(index.exists()){
 									long fileSize = index.length() / 1024 / 1024;
-									label.setText("Running CTags (" + fileSize + "mb)...");
+									setLabelMsg("Running CTags (" + fileSize + "mb)...");
 								}
 								p.exitValue();
 								break; // if we get an exit value then ctags has quit.
@@ -586,7 +639,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 						p.waitFor();
 					}catch(Exception e){
 						e.printStackTrace();
-						label.setText("FAILED: ECtags did not run properly. Check it's location in the options menu.");
+						setLabelMsg("FAILED: ECtags did not run properly. Check it's location in the options menu.");
 						failed = true;
 					}
 					
@@ -605,12 +658,12 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 							long charCount = 0;
 							char oldc = ' ';
 							
-							label.setText("Initialising Index...");
+							setLabelMsg("Initialising Index...");
 							for(int n = 0; n < 0xFFFF; n++){
 								hash.writeLong(0);
 							}
 							
-							label.setText("Optimising Index...");
+							setLabelMsg("Optimising Index...");
 							while((line = buffy.readLine()) != null)
 							{
 								char c = line.charAt(0);
@@ -623,7 +676,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 										hash.writeLong(charCount);
 									}
 								}else{
-									label.setText("Optimising '" + c + "'...");
+									setLabelMsg("Optimising '" + c + "'...");
 									
 									oldc = c;
 									
@@ -645,17 +698,17 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 							buffy.close();
 						}catch(Exception e){
 							e.printStackTrace();
-							label.setText("FAILED: Index optimisation encountered an error: " + e.getMessage());
+							setLabelMsg("FAILED: Index optimisation encountered an error: " + e.getMessage());
 							failed = true;
 						}
 					}else{
-						label.setText("WARNING: ECtags did not produce any results.");
+						setLabelMsg("WARNING: ECtags did not produce any results.");
 						failed = true;
 					}
 					
 					if(!failed){
 						long fileSize = index.length() / 1024 / 1024;
-						label.setText("Indexing Finished. (" + fileSize + "mb)");
+						setLabelMsg("Indexing Finished. (" + fileSize + "mb)", 3000);
 					}
 					
 					workThread = null;
@@ -667,7 +720,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 	
 	public void setSearchResults(Vector results){
 		clearResults();
-		label.setText("Building result table...");
+		setLabelMsg("Building result table...");
 		JPanel panel = new JPanel();
 		JPanel fpanel = new JPanel();
 		panel.setBackground(background_colour);
@@ -687,7 +740,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 				res.clear();
 				
 				if(n % 10 == 0){
-					label.setText("Building result table [" + (n+1) + "/" + results.size() + "]");
+					setLabelMsg("Building result table [" + (n+1) + "/" + results.size() + "]");
 				}
 				
 				String line = (String)results.elementAt(n);
@@ -771,7 +824,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 				fpanel.add(pathlabel);
 			}
 			
-			label.setText("Building result table [" + results.size() + "/" + results.size() + "]");
+			setLabelMsg("Building result table [" + results.size() + "/" + results.size() + "]");
 		}
 		
 		JPanel panel2 = new JPanel();
@@ -781,7 +834,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 		panel2.add(fpanel, BorderLayout.EAST);
 		flist.setViewportView(panel2);
 		
-		label.setText("Search Complete (" + results.size() + (results.size()==1?" result)":" results)"));
+		setLabelMsg("Search Complete (" + results.size() + (results.size()==1?" result)":" results)"), 3000);
 	}
 	
 	private void searchIndex(final String searchstr)
@@ -790,7 +843,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 		if(searchstr.equals("")) return;
 		
 		if(searchstr.length() < 2){
-			label.setText("Search string must be at least 2 characters long!");
+			setLabelMsg("Search string must be at least 2 characters long!");
 			return;
 		}
 		
@@ -814,7 +867,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 					txt.setSelectedItem(search);
 					
 					if(index.exists()){
-						label.setText("Searching...");
+						setLabelMsg("Searching...");
 						Vector results = new Vector();
 						
 						if(search != null && !search.trim().equals("")){
@@ -849,7 +902,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 						
 						setSearchResults(results);
 					}else{
-						label.setText("ERROR: Index File Not Found");
+						setLabelMsg("ERROR: Index File Not Found");
 					}
 					
 					workThread = null;

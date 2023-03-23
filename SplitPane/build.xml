@@ -18,7 +18,7 @@
 	</target>
 	
 	<target name="init_windows" depends="checkos" if="isWindows">
-		<property name="jedit.install.dir"  value="C:/Program Files/JEdit"/>
+		<property name="jedit.install.dir"  value="${env.USERPROFILE}/AppData/Local/Programs/jEdit"/>
 		<property name="install.dir"  value="${env.USERPROFILE}/AppData/Roaming/JEdit/jars"/>
 	</target>
 	

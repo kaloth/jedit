@@ -47,10 +47,7 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	
 	private JSplitPane jsp = new JSplitPane();
 	
-	private JComboBox<String> profile = new JComboBox();
-	private ItemListener profile_listener;
-	
-	private Object[] plugins;
+	private Object[] plugins;     
 	private String[] names;
 	
 	public SplitPane(View view, String position, String name)
@@ -112,61 +109,10 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		EditBus.removeFromBus(this);
 	}
 	
-	private void updateProfileList()
-	{
-		synchronized(profile)
-		{
-			String profilename = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + this.name + "_current-profile");
-			
-			if (profile_listener != null)
-			{
-				profile.removeItemListener(profile_listener);
-			}
-			profile.removeAllItems();
-			
-			String profiles = jEdit.getProperty(
-				SplitPanePlugin.OPTION_PREFIX + "profiles");
-			
-			LogMsg(Log.DEBUG, SplitPane.class,
-					this.name + " Fetching Profile List: " + profiles);
-			
-			if(profiles != null)
-			{
-				String profile_list[] = profiles.split("\\|");
-				for(int n = 0; n < profile_list.length; n++)
-				{
-					if(!profile_list[n].equals(""))
-					{
-						profile.addItem(profile_list[n]);
-					}
-				}
-			}
-			
-			if(profilename != null)
-			{
-				LogMsg(Log.DEBUG, SplitPane.class,
-					this.name + " Restoring Current Profile (updateProfileList): " + profilename);
-				profile.setSelectedItem(profilename);
-			}
-			else if(profile.getItemCount() > 0)
-			{
-				// first time? Just load the first profile available.
-				profilename = profile.getItemAt(0);
-				profile.setSelectedItem(profilename);
-			}
-			
-			if (profile_listener != null)
-			{
-				profile.addItemListener(profile_listener);
-			}
-			
-			loadProfile(profilename);
-		}
-	}
-
 	private void propertiesChanged()
 	{
-		updateProfileList();
+		String profilename = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + this.name + "_current-profile");
+		loadProfile(profilename);
 	}
 	
 	private void loadProfile(String profilename)
@@ -174,7 +120,17 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		LogMsg(Log.DEBUG, SplitPane.class,
 				this.name + " Loading Profile: " + profilename);
 		
+		DockableWindowManager dwm = this.view.getDockableWindowManager();
+		
+		jEdit.setProperty("SplitPane_" + this.name + ".longtitle", profilename);
+		jEdit.setProperty("SplitPane_" + this.name + ".title", profilename);
+		jEdit.setProperty("SplitPane_" + this.name + ".label", profilename);
 		jEdit.setProperty(SplitPanePlugin.OPTION_PREFIX + this.name + "_current-profile", profilename);
+		
+		//dwm.dockableTitleChanged("SplitPane_" + this.name, profilename);
+		//dwm.setDockableTitle("SplitPane_" + this.name, profilename);
+		
+		dwm.handleDockableWindowUpdate(new DockableWindowUpdate(dwm, DockableWindowUpdate.PROPERTIES_CHANGED, "SplitPane_" + this.name));
 		
 		String profile = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + "profile-" + profilename);
 		if(profile != null)
@@ -249,17 +205,13 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	}
 	
 	private void buildGUI(){
-		if(floating){
+		if (floating)
+		{
 			this.setPreferredSize(new Dimension(500, 500));
-			
-			add(profile, BorderLayout.NORTH);
-			
 			setSize(400, 400);
-		}else{
-			add(profile, BorderLayout.NORTH);
 		}
 		
-		if(floating || position.equals(DockableWindowManager.RIGHT) || position.equals(DockableWindowManager.LEFT))
+		if (floating || position.equals(DockableWindowManager.RIGHT) || position.equals(DockableWindowManager.LEFT))
 		{
 			jsp = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		}
@@ -283,22 +235,6 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		{
 			jsp.setDividerLocation(0.5);
 		}
-		
-		profile_listener = new ItemListener()
-		{
-			public void itemStateChanged(ItemEvent e)
-			{
-				if(e.getStateChange() == e.SELECTED)
-				{
-					synchronized(profile)
-					{
-						loadProfile((String)profile.getSelectedItem());
-					}
-				}
-			}
-		};
-		
-		profile.addItemListener(profile_listener);
 		
 		final String divider_property_name = SplitPanePlugin.OPTION_PREFIX + this.name + "_divider-location";
 		jsp.addPropertyChangeListener(new PropertyChangeListener()
