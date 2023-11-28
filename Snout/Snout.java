@@ -263,7 +263,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 					SearchAndReplace.setAutoWrapAround(true);
 					SearchAndReplace.setReverseSearch(false);
 					SearchAndReplace.setIgnoreCase(false);
-					SearchAndReplace.setRegexp(false);
+					SearchAndReplace.setRegexp(true);
 					SearchAndReplace.setSearchFileSet(new CurrentBufferSet());
 					if(!SearchAndReplace.find(jEdit.getActiveView()))
 					{
@@ -743,6 +743,8 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 					setLabelMsg("Building result table [" + (n+1) + "/" + results.size() + "]");
 				}
 				
+				// https://ctags.sourceforge.net/FORMAT
+				
 				String line = (String)results.elementAt(n);
 				int i, i2;
 				i = line.indexOf("\t");
@@ -765,12 +767,11 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 				line = line.substring(i+1, line.length());
 				
 				i = line.indexOf("/^");
-				i2 = line.indexOf("$/;\"", i+2);
-				if(i2 == -1) i2 = line.indexOf("/;\"", i+2);
+				i2 = line.indexOf("/;\"", i+2);
 				
 				String blurb = null;
 				if((i != -1) && (i2 != -1) && (i < i2)){
-					blurb = line.substring(i+2, i2);
+					blurb = line.substring(i+1, i2);
 				}else{
 					blurb = null;
 					/* No blurb? look for a line number... */
@@ -782,6 +783,17 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 					}
 				}
 				if(blurb != null){
+					/* Blurb is in Vi style regular expressions. We need to
+					 * convert to jEdit Style
+					 *
+					 * Example: ^	MY_SIMPLE_THING,    \/**< Some comment about it *\/$
+					 */
+					
+					// The Vi-style regex seems to mis-use the * char without escaping it. 
+					blurb = blurb.replace("*", "\\*");
+					blurb = blurb.replace("(", "\\(");
+					blurb = blurb.replace(")", "\\)");
+					
 					res.put("blurb", blurb);
 				}
 				
