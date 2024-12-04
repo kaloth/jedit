@@ -544,9 +544,6 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 		try{
 			Process p = Runtime.getRuntime().exec(fcom);
 			
-			/* Remove the old results */
-			clearResults();
-			
 			BufferedReader buffy = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			Vector v = new Vector();
 			String line;
@@ -676,7 +673,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 		}
 	}
 	
-	private void clearResults()
+	private synchronized void clearResults()
 	{
 		currentResults = null;
 		flist.removeAll();
@@ -698,7 +695,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 		return item;
 	}
 	
-	public boolean setSearchResults(Vector results, String filter){
+	public synchronized boolean setSearchResults(Vector results, String filter){
 		if(results.size() < MAX_SEARCH_RESULTS)
 		{
 			ResultSet newResults = new ResultSet();
