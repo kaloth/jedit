@@ -42,7 +42,7 @@ jobs:
       run: ant -noinput -buildfile build.xml
       
     - name: Archive binaries
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: binaries
         path: /home/runner/jedit/jars/*.jar
