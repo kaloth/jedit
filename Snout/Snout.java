@@ -104,7 +104,8 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 				excludelist.createNewFile();
 				dirlist.createNewFile();
 			}catch(Exception e){
-				e.printStackTrace();
+				LogMsg(Log.ERROR, Snout.class,
+					"Unable to create storage directory", e);
 			}
 		}
 		
@@ -476,7 +477,8 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 				}
 				buffy.close();
 			}catch(Exception e){
-				e.printStackTrace();
+				LogMsg(Log.ERROR, Snout.class,
+					"Unable to add current directory to indexed locations", e);
 			}
 		}
 		
@@ -502,7 +504,8 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 			}
 			spike.close();
 		}catch(Exception ex){
-			ex.printStackTrace();
+			LogMsg(Log.ERROR, Snout.class,
+					"Unable to add current directory to indexed locations", ex);
 		}
 		
 		setLabelMsg("Added: " + newDir);
@@ -557,7 +560,7 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 	
 	private long getFilePosition(String str)
 	{
-		return (str.charAt(0) | (str.charAt(1) << 8)) * 8;
+		return ((str.charAt(0)%256) | ((str.charAt(1)%256) << 8)) * 8;
 	}
 	
 	private void refreshIndex(boolean force)
@@ -604,7 +607,8 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 							}
 							buffy.close();
 						}catch(Exception e){
-							e.printStackTrace();
+							LogMsg(Log.ERROR, Snout.class,
+								"Something went wrong when reading the dirlist", e);
 						}
 					}
 					
@@ -638,7 +642,8 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 						}
 						p.waitFor();
 					}catch(Exception e){
-						e.printStackTrace();
+						LogMsg(Log.ERROR, Snout.class,
+								"ECtags did not run properly", e);
 						setLabelMsg("FAILED: ECtags did not run properly. Check it's location in the options menu.");
 						failed = true;
 					}
@@ -650,11 +655,11 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 							for each letter of the alphabet to improve search
 							speeds when index is really big...
 						*/
+						int lineNum = 1;
 						try{
 							BufferedReader buffy = new BufferedReader(new InputStreamReader(new FileInputStream(index)));
 							RandomAccessFile hash = new RandomAccessFile(new File(index.getParent() + "\\hash.dat"), "rw");
 							String line;
-							int lineNum = 0;
 							long charCount = 0;
 							char oldc = ' ';
 							
@@ -666,8 +671,13 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 							setLabelMsg("Optimising Index...");
 							while((line = buffy.readLine()) != null)
 							{
+								if (line.length() == 0)
+								{
+									continue;
+								}
+								
 								char c = line.charAt(0);
-								if(c == oldc && lineNum != 0){
+								if(c == oldc && lineNum > 1){
 									long pos = getFilePosition(line);
 									hash.seek(pos);
 									long check = hash.readLong();
@@ -697,8 +707,9 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 							hash.close();
 							buffy.close();
 						}catch(Exception e){
-							e.printStackTrace();
-							setLabelMsg("FAILED: Index optimisation encountered an error: " + e.getMessage());
+							LogMsg(Log.ERROR, Snout.class,
+								"Index optimisation encountered an error (line " + lineNum + ")", e);
+							setLabelMsg("FAILED: Index optimisation encountered an error (line " + lineNum + "): " + e.getMessage());
 							failed = true;
 						}
 					}else{
@@ -908,7 +919,8 @@ public class Snout extends JPanel implements EBComponent, SnoutActions, DefaultF
 								
 								buffy.close();
 							}catch(Exception e){
-								e.printStackTrace();
+								LogMsg(Log.ERROR, Snout.class,
+									"Failed when searching the index", e);
 							}
 						}
 						
