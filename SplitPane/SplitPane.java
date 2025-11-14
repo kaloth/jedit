@@ -112,7 +112,12 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 	private void propertiesChanged()
 	{
 		String profilename = jEdit.getProperty(SplitPanePlugin.OPTION_PREFIX + this.name + "_current-profile");
-		loadProfile(profilename);
+		
+		SwingUtilities.invokeLater(new Thread(){
+				public void run(){
+					loadProfile(profilename);
+				}
+		});
 	}
 	
 	private void loadProfile(String profilename)
@@ -161,7 +166,7 @@ public class SplitPane extends JPanel implements SplitPaneActions, EBComponent
 		// In a Window? Hide the window
 		if (plugin != null)
 		{
-			Window window = SwingUtilities.getWindowAncestor(plugin);
+			Component window = SwingUtilities.getRoot(plugin);
 			if (window != null && this.view != window)
 			{
 				window.setVisible(false);
