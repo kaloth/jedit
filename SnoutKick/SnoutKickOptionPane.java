@@ -1,8 +1,8 @@
 /*
  * SnoutKickOptionPane.java
  * part of the SnoutKick plugin for the jEdit text editor
- * Copyright (C) 2007 Christopher Plant
- * mulletwarriroextreem@hotmail.com
+ * Copyright (C) 2025 Christopher Plant
+ * chris.james.plant@gmail.com
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -87,9 +87,7 @@ public class SnoutKickOptionPane extends AbstractOptionPane
 		jEdit.setProperty(SnoutKickPlugin.OPTION_PREFIX + "sorttype",
 			"" + SnoutKick.getSortType((String)sortType.getSelectedItem()));
 	}
-	// end AbstractOptionPane implementation
-
-	// begin ActionListener implementation
+	
 	public void actionPerformed(ActionEvent evt)
 	{
 		String currentPath = pathName.getText();

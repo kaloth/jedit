@@ -1,8 +1,8 @@
 /*
  * SnoutKick.java
  * part of the SnoutKick plugin for the jEdit text editor
- * Copyright (C) 2007 Christopher Plant
- * mulletwarriroextreem@hotmail.com
+ * Copyright (C) 2025 Christopher Plant
+ * chris.james.plant@gmail.com
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,8 +30,6 @@ import java.util.regex.*;
 // from Swing:
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 
 // from jEdit:
 import org.gjt.sp.jedit.*;
@@ -283,7 +281,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 		
 		colours.put("m", org.gjt.sp.util.SyntaxUtilities.parseStyle(jEdit.getProperty("view.style.function"), family, size, true).getForegroundColor());
 		colours.put("f", org.gjt.sp.util.SyntaxUtilities.parseStyle(jEdit.getProperty("view.style.comment1"), family, size, true).getForegroundColor());
-		colours.put("c", org.gjt.sp.util.SyntaxUtilities.parseStyle(jEdit.getProperty("view.style.comment2"), family, size, true).getForegroundColor());
+		colours.put("c", org.gjt.sp.util.SyntaxUtilities.parseStyle(jEdit.getProperty("view.style.keyword1"), family, size, true).getForegroundColor());
 		colours.put("d", org.gjt.sp.util.SyntaxUtilities.parseStyle(jEdit.getProperty("view.style.comment4"), family, size, true).getForegroundColor());
 		colours.put("l", org.gjt.sp.util.SyntaxUtilities.parseStyle(jEdit.getProperty("view.style.label"), family, size, true).getForegroundColor());
 		colours.put("t", org.gjt.sp.util.SyntaxUtilities.parseStyle(jEdit.getProperty("view.style.literal1"), family, size, true).getForegroundColor());
@@ -744,7 +742,7 @@ public class SnoutKick extends JPanel implements EBComponent, SnoutKickActions, 
 				File file = new File(stTags[1]);
 				res.put("file", file);
 				if(file.exists()){
-					Buffer buffy = jEdit._getBuffer(file.getPath());
+					Buffer buffy = jEdit.getBuffer(file.getPath());
 					if(buffy != null){
 						res.put("buffy", buffy);
 					}

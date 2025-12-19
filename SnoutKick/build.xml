@@ -29,17 +29,6 @@
 
 	<target name="init" depends="init_unix,init_windows">
 		<mkdir dir="${build}"/>
-		<delete file="docbook-wrapper.xsl" />
-		<echo file="docbook-wrapper.xsl"
-			message="&lt;xsl:stylesheet"/>
-		<echo file="docbook-wrapper.xsl" append="true"
-			message=" xmlns:xsl='http://www.w3.org/1999/XSL/Transform'"/>
-		<echo file="docbook-wrapper.xsl" append="true"
-			message=" xsl:version='1.0'&gt;"/>
-		<echo file="docbook-wrapper.xsl" append="true"
-			message="&lt;xsl:import href='${docbook.xsl}/html/chunk.xsl'/&gt;"/>
-		<echo file="docbook-wrapper.xsl" append="true"
-			message="&lt;/xsl:stylesheet&gt;"/>
 		
 		<path id="project.class.path">
 			<pathelement location="${jedit.install.dir}/jedit.jar"/>
@@ -66,21 +55,12 @@
 				<include name="**/*.props"/>
 				<include name="**/*.html"/>
 				<include name="**/*.gif"/>
-				<include name="actions.xml"/>
-				<include name="dockables.xml"/>
+				<include name="**/*.png"/>
+				<include name="**/*.xml"/>
 			</fileset>
 			<fileset dir="classes">
 				<include name="**/*.class"/>
 			</fileset>
 		</jar>
-	</target>
-
-	<!-- Generate docs with xsltproc tool from www.xmlsoft.org -->
-	<target name="docs-xsltproc" depends="init">
-		<exec executable="xsltproc">
-			<arg value="--catalogs"/>
-			<arg value="users-guide.xsl"/>
-			<arg value="users-guide.xml"/>
-		</exec>
 	</target>
 </project>

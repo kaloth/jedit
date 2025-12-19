@@ -1,26 +1,26 @@
-# Properties file for SnoutKick plugin
+# Properties file for the SnoutKick plugin
 
 # jEdit only needs to load the plugin the first time the user accesses it
 # the presence of this property also tells jEdit the plugin is using the new API
 plugin.SnoutKickPlugin.activate=defer
 
-# These two properties are required for all plugins
+# Information about the plugin
 plugin.SnoutKickPlugin.name=SnoutKick
-plugin.SnoutKickPlugin.author=Christopher Plant
-
-# version number == jEdit version number
 plugin.SnoutKickPlugin.version=1.0
+plugin.SnoutKickPlugin.author=Christopher Plant
+plugin.SnoutKickPlugin.description=A simple ctags sidebar for quickly browsing symbols
 
-# online help
+# help documentation
 plugin.SnoutKickPlugin.docs=index.html
 
-# we only have one dependency, jEdit 4.2, since we use the new plugin API
-plugin.SnoutKickPlugin.depend.0=jedit 04.02.01.00
+# dependencies
+plugin.SnoutKickPlugin.depend.0=jedit 05.00.99.00
+plugin.SnoutKickPlugin.depend.1=jdk 1.6
 
 # plugin menu
 plugin.SnoutKickPlugin.menu=SnoutKick \
 	- \
-	SnoutKick.refresh \
+	SnoutKick.refresh
 
 # action labels for actions supplied by dockables.xml
 SnoutKick.label=SnoutKick
@@ -45,11 +45,6 @@ options.SnoutKick.choose-sort.title=Sort by...
 
 # window title
 SnoutKick.title=SnoutKick
-
-# window toolbar buttons
-SnoutKick.choose-file.icon=Open.png
-SnoutKick.save-file.icon=Save.png
-SnoutKick.copy-to-buffer.icon=CopyToBuffer.png
 
 # Setting not defined but supplied for completeness
 options.SnoutKick.ctagspath=

@@ -1,8 +1,8 @@
 /*
  * SnoutKickActions.java
  * part of the SnoutKick plugin for the jEdit text editor
- * Copyright (C) 2007 Christopher Plant
- * mulletwarriroextreem@hotmail.com
+ * Copyright (C) 2025 Christopher Plant
+ * chris.james.plant@gmail.com
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
