@@ -9,6 +9,7 @@ plugin.SnoutKickPlugin.name=SnoutKick
 plugin.SnoutKickPlugin.version=1.0
 plugin.SnoutKickPlugin.author=Christopher Plant
 plugin.SnoutKickPlugin.description=A simple ctags sidebar for quickly browsing symbols
+plugin.SnoutKickPlugin.longdescription=description.html
 
 # help documentation
 plugin.SnoutKickPlugin.docs=index.html
